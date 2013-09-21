@@ -1,0 +1,65 @@
+PHY/CacheBundle - Simple Symfony2 wrapper around the more common caches.
+================================================================================
+
+
+Simple enough to use cache wrapper for Symfony2. Right now supports APC, Local Disk, Memcache, and Memcached.
+
+Install
+-----
+
+To include this along with your Symfony2 project then you can just include this in your composer config:
+
+```
+"require": {
+    "PHY/CacheBundle": "dev-master"
+}
+```
+
+And update composer accordingly.
+
+Configuration
+-----
+
+todo... Sorry, it's 2:08am now...
+
+About
+-----
+
+Originally was using [BerylliumCacheBundle](https://github.com/beryllium/CacheBundle) by
+[Kevin Boyd](https://github.com/beryllium). Got the job done for the most part but I needed to compress some rather
+large aggregate results from MongoDB. Made a pull request to add the compression on and noticed certain other functions
+weren't quite implemented yet. Having already done a similar bundle for Cache (albeit not for Symfony2) figured I could
+just port that over and here we are.
+
+Requirements
+------------
+
+- PHP 5.3+
+
+Submitting bugs and feature requests
+------------------------------------
+
+Please send bugs to me via
+[GitHub](https://github.com/mullanaphy/CacheBundle/issues)
+
+Author
+------
+
+John Mullanaphy - <john@jo.mu> - <http://jo.mu/>
+That's it for now...
+
+License
+-------
+
+PHY/CacheBundle is licensed under the Open Software License (OSL 3.0) -
+see the `LICENSE` file for details
+
+Acknowledgements
+----------------
+
+- [Kevin Boyd](https://github.com/beryllium)
+
+TODO
+----
+
+- Tests, Tests, TESTS!

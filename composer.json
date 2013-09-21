@@ -1,0 +1,26 @@
+{
+    "name": "PHY/CacheBundle",
+    "description": "Cache Bundle for Symfony2 that supports APC, Memcache, Memcached, Local, and Disk storage.",
+    "keywords": ["symfony", "apc", "memcache", "memcached", "disk", "cache"],
+    "minimum-stability": "dev",
+    "type": "symfony-bundle",
+    "authors": [
+        {
+            "name": "John Mullanaphy",
+            "email": "Mullanaphy"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "symfony/framework-bundle": "2.*"
+    },
+    "suggest": {
+        "ext-zlib": "If zlib is enabled we can compress values regardless of cache system."
+    },
+    "autoload": {
+        "psr-0": {
+            "PHY/CacheBundle": ""
+        }
+    },
+    "target-dir": "PHY/CacheBundle"
+}
