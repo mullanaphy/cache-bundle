@@ -1,5 +1,5 @@
 {
-    "name": "PHY/CacheBundle",
+    "name": "phy/cache-bundle",
     "description": "Cache Bundle for Symfony2 that supports APC, Memcache, Memcached, Local, and Disk storage.",
     "keywords": ["symfony", "apc", "memcache", "memcached", "disk", "cache"],
     "minimum-stability": "dev",
