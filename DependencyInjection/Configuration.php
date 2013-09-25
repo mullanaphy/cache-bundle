@@ -12,7 +12,7 @@
      * to john@jo.mu so I can send you a copy immediately.
      */
 
-    namespace PHY\CacheBundle;
+    namespace PHY\CacheBundle\DependencyInjection;
 
     use Symfony\Component\Config\Definition\Builder\TreeBuilder;
     use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -34,7 +34,7 @@
         public function getConfigTreeBuilder()
         {
             $treeBuilder = new TreeBuilder;
-            $rootNode = $treeBuilder->root('phy.cache');
+            $rootNode = $treeBuilder->root('phy_cache');
 
             // Here you should define the parameters that are allowed to
             // configure your bundle. See the documentation linked above for

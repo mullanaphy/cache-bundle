@@ -14,8 +14,6 @@
 
     namespace PHY\CacheBundle;
 
-    use PHY\CacheBundle\Cache\CacheInterface;
-
     /**
      * Our main cache class. This is what will be sent along to the container.
      *
@@ -27,6 +25,7 @@
      */
     class Cache
     {
+
         private $client;
         private $prefix = '';
         private $flag = 0;
@@ -87,7 +86,6 @@
         {
             return $this->expiration;
         }
-
 
         /**
          * Add a prefix to our cache sets/gets/etcs.
@@ -231,4 +229,6 @@
         {
             return $this->getClient()->getStats();
         }
+
     }
+

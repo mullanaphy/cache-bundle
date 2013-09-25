@@ -12,7 +12,7 @@
      * to john@jo.mu so I can send you a copy immediately.
      */
 
-    namespace PHY\CacheBundle;
+    namespace PHY\CacheBundle\Command;
 
     use Symfony\Component\Console\Input\InputOption;
     use Symfony\Component\Console\Input\InputArgument;
@@ -29,7 +29,7 @@
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class CacheClientStatsCommand extends ContainerAwareCommand
+    class CacheStatsCommand extends ContainerAwareCommand
     {
 
         /**

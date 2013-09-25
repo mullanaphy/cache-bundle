@@ -1,8 +1,7 @@
 parameters:
-    phy_cache.client.class: PHY\CacheBundle\Cache\Memcache
-    phy_cache.client.settings:
-      server: [ '127.0.0.1:11211' ]
-    phy_cache.prefix: 'phy_'
-    phy_cache.class: PHY\CacheBundle\Cache
+    phy_cache.class: PHY\CacheBundle\Cache\Memcache
+    phy_cache.settings:
+      server: [ 127.0.0.1:11211 ]
+    phy_cache.prefix: phy_
     phy_cache.expiration: 300
-    phy_cache.compress: 0
+    phy_cache.compression: 0

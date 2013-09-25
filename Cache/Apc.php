@@ -38,7 +38,7 @@
                 $settings['mode'] = 'opcode';
             }
             if (!function_exists('apc_cache_info') || !@apc_cache_info($settings['mode'])) {
-                throw new Exception('APC Caching is disabled, is not available on this server.');
+                throw new Exception('APC Caching is disabled.');
             }
         }
 

@@ -40,9 +40,9 @@
                     foreach ($settings['server'] as $server) {
                         if (!$first) {
                             $first = true;
-                            call_user_func_array(array($this, 'connect'), $server);
+                            call_user_func_array(array($this, 'connect'), array($server));
                         } else {
-                            call_user_func_array(array($this, 'addServer'), $server);
+                            call_user_func_array(array($this, 'addServer'), array($server));
                         }
                     }
                 } else {
@@ -70,8 +70,41 @@
         /**
          * {@inheritDoc}
          */
+        public function set($node, $value = false, $expiration = 0, $flag = 0)
+        {
+            return parent::set($node, $value, $expiration, $flag);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function replace($node, $value = false, $expiration = 0, $flag = 0)
+        {
+            return $node;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function get($node, $flag = 0)
+        {
+            return parent::get($node, $flag);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function delete($node)
+        {
+            return parent::delete($node);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
         public function getName()
         {
             return 'Local';
         }
+
     }

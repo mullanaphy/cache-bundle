@@ -22,6 +22,7 @@
      * @copyright Copyright (c) 2013 John Mullanaphy (http://jo.mu/)
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
+     * @todo Stats aren't 100% accurate as multiple processes can be writing to it...
      */
     class Disk implements CacheInterface
     {
@@ -203,7 +204,7 @@
             $size = 0;
             $DIR = opendir($this->location);
             if ($DIR) {
-                $ignore = array('.', '..');
+                $ignore = array('.', '..', '__phy_stats');
                 while (false !== ($file = readdir($DIR))) {
                     if (!in_array($file, $ignore)) {
                         $size += filesize($file);
@@ -213,11 +214,12 @@
             }
             return array(
                 'connections' => $this->stats['connect'], 'size' => $size, 'sets' => $this->stats['set'],
-                'hits' => $this->stats['hit'], 'failures' => $this->stats['failure'],
-                'success_rate' => sprintf('%d2', (($this->stats['hit'] / $this->stats['failure']) * 100))
+                'hits' => $this->stats['success'], 'failures' => $this->stats['failure'],
+                'hit_rate' => $this->stats['set']
+                    ? sprintf('%d2', (($this->stats['success'] / $this->stats['set']) * 100))
+                    : 0
             );
         }
-
 
         /**
          * Open our stats. This isn't ideal, since
@@ -226,8 +228,8 @@
          */
         private function openStats()
         {
-            $file = $this->file('__phy_stats');
-            $this->STATS = fopen($file, 'r+');
+            $file = $this->location . DIRECTORY_SEPARATOR . '__phy_stats';
+            $this->STATS = fopen($file, 'w+');
             $stats = fread($this->STATS, filesize($file));
             if ($stats) {
                 $this->stats = unserialize($stats);
@@ -254,4 +256,6 @@
         {
             return 'Disk';
         }
+
     }
+
