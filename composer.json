@@ -19,7 +19,7 @@
     },
     "autoload": {
         "psr-0": {
-            "PHY/CacheBundle": ""
+            "PHY\\CacheBundle": ""
         }
     },
     "target-dir": "PHY/CacheBundle"
