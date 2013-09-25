@@ -11,7 +11,8 @@
      * obtain it through the world-wide-web, please send an email
      * to john@jo.mu so I can send you a copy immediately.
      */
-    namespace PHY\CacheBundle;
+
+    namespace PHY\CacheBundle\DependencyInjection;
 
     use Symfony\Component\DependencyInjection\ContainerBuilder;
     use Symfony\Component\Config\FileLocator;
@@ -39,6 +40,8 @@
             $config = $this->processConfiguration($configuration, $configs);
 
             $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+            $loader->load('parameters.yml');
             $loader->load('services.yml');
         }
+
     }

@@ -14,6 +14,8 @@
 
     namespace PHY\CacheBundle;
 
+    use PHY\CacheBundle\Cache\CacheInterface;
+
     /**
      * Our main cache class. This is what will be sent along to the container.
      *
