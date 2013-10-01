@@ -11,7 +11,7 @@ To include this along with your Symfony2 project then you can just include this 
 
 ```
 "require": {
-    "PHY/CacheBundle": "dev-master"
+    "phy/cache-bundle": "dev-master"
 }
 ```
 
@@ -20,7 +20,55 @@ And update composer accordingly.
 Configuration
 -----
 
-todo... Sorry, it's 2:08am now...
+Here's an example of our services.yml, you don't really need to change this since values come from parameters.yml
+
+```
+services:
+  phy_cache.client:
+    class: %phy_cache.class%
+    arguments: [ %phy_cache.settings% ]
+  phy_cache:
+    class: PHY\CacheBundle\Cache
+    arguments: [ '@phy_cache.client' ]
+    calls:
+      - [ setExpiration, [ %phy_cache.expiration% ] ]
+      - [ setCompression, [ %phy_cache.compression% ] ]
+      - [ setPrefix, [ %phy_cache.prefix% ] ]
+```
+
+Here's how you'd setup some common caches in your parameters.yml
+
+Memcache
+```
+parameters:
+    phy_cache.class: PHY\CacheBundle\Cache\Memcache
+    phy_cache.settings:
+      server: [ 127.0.0.1:11211 ]
+    phy_cache.prefix: phy_
+    phy_cache.expiration: 300
+    phy_cache.compression: 0
+```
+
+Disk
+```
+parameters:
+    phy_cache.class: PHY\CacheBundle\Cache\Disk
+    phy_cache.settings:
+      location: '/var/tmp/cache/'
+    phy_cache.expiration: 300
+    phy_cache.compression: 0
+```
+
+Apc
+```
+parameters:
+    phy_cache.class: PHY\CacheBundle\Cache\Apc
+    phy_cache.settings:
+      mode: opcode
+    phy_cache.prefix: phy_
+    phy_cache.expiration: 300
+    phy_cache.compression: 0
+```
 
 About
 -----
