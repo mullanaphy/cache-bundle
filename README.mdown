@@ -22,7 +22,7 @@ Configuration
 
 Here's an example of our services.yml, you don't really need to change this since values come from parameters.yml
 
-```
+```yaml
 services:
   phy_cache.client:
     class: %phy_cache.class%
@@ -39,7 +39,7 @@ services:
 Here's how you'd setup some common caches in your parameters.yml
 
 Memcache
-```
+```yaml
 parameters:
     phy_cache.class: PHY\CacheBundle\Cache\Memcache
     phy_cache.settings:
@@ -50,7 +50,7 @@ parameters:
 ```
 
 Disk
-```
+```yaml
 parameters:
     phy_cache.class: PHY\CacheBundle\Cache\Disk
     phy_cache.settings:
@@ -60,7 +60,7 @@ parameters:
 ```
 
 Apc
-```
+```yaml
 parameters:
     phy_cache.class: PHY\CacheBundle\Cache\Apc
     phy_cache.settings:
@@ -68,6 +68,46 @@ parameters:
     phy_cache.prefix: phy_
     phy_cache.expiration: 300
     phy_cache.compression: 0
+```
+
+Usage
+-----
+
+To call the cache inside your controller (or any container aware class) you just need to call it by its service name.
+
+```php
+$cache = $this->container->get('phy_cache');
+```
+
+From there, you can start setting, getting, replacing, incrementing, decrementing, and so forth.
+
+```php
+$id = 1;
+$cache = $this->container->get('phy_cache');
+$hashKey = 'someModel/'.$id;
+
+if(!$someModel = $cache->get($hashKey)) {
+    $someModel = $this->loadModel($id);
+    $cache->set($hashKey, $someModel, 300);
+    $cache->increment($hashKey.'/loads', 1);
+}
+```
+
+All methods available are almost 100% equal to [\Memcache](php.net/manual/en/class.memcache.php).
+
+Command Line
+------------
+
+There are two command line options.
+
+Check current running stats (Needs some style and extra functionality)
+```
+php app/console phy:cache:stats
+```
+
+And flushing your cache completely
+```
+php app/console phy:cache:flush
 ```
 
 About
