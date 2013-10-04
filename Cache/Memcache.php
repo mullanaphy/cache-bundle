@@ -72,7 +72,7 @@
          */
         public function set($node, $value = false, $expiration = 0, $flag = 0)
         {
-            return parent::set($node, $value, $expiration, $flag);
+            return parent::set($node, $value, $flag, $expiration);
         }
 
         /**

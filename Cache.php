@@ -130,7 +130,7 @@
          */
         public function decrement($node, $decrement = 1)
         {
-            return $this->getClient()->decrement($this->getPrefix() . $node, $decrement);
+            return $this->getClient()->decrement($this->getPrefix().$node, $decrement);
         }
 
         /**
@@ -142,7 +142,7 @@
          */
         public function delete($node)
         {
-            return $this->getClient()->delete($this->getPrefix() . $node);
+            return $this->getClient()->delete($this->getPrefix().$node);
         }
 
         /**
@@ -167,7 +167,7 @@
             if (-1 === $flag) {
                 $flag = $this->getCompression();
             }
-            return $this->getClient()->get($this->getPrefix() . $node, $flag);
+            return $this->getClient()->get($this->getPrefix().$node, $flag);
         }
 
         /**
@@ -179,7 +179,7 @@
          */
         public function increment($node, $increment = 1)
         {
-            return $this->getClient()->increment($this->getPrefix() . $node, $increment);
+            return $this->getClient()->increment($this->getPrefix().$node, $increment);
         }
 
         /**
@@ -199,7 +199,7 @@
             if (-1 === $flag) {
                 $flag = $this->getCompression();
             }
-            return $this->getClient()->replace($this->getPrefix() . $node, $value, $expiration, $flag);
+            return $this->getClient()->replace($this->getPrefix().$node, $value, $expiration, $flag);
         }
 
         /**
@@ -211,7 +211,7 @@
          * @param int $expiration
          * @return bool
          */
-        public function set($node, $value = false, $expiration = 0, $flag = 0)
+        public function set($node, $value = false, $expiration = -1, $flag = -1)
         {
             if (-1 === $expiration) {
                 $expiration = $this->getExpiration();
@@ -219,7 +219,7 @@
             if (-1 === $flag) {
                 $flag = $this->getCompression();
             }
-            return $this->getClient()->set($this->getPrefix() . $node, $value, $expiration, $flag);
+            return $this->getClient()->set($this->getPrefix().$node, $value, $expiration, $flag);
         }
 
         /**
@@ -230,6 +230,16 @@
         public function getStats()
         {
             return $this->getClient()->getStats();
+        }
+
+        /**
+         * Grab the name of our client.
+         *
+         * @return string
+         */
+        public function getName()
+        {
+            return $this->getClient()->getName();
         }
 
     }
