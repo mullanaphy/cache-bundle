@@ -48,7 +48,7 @@
         /**
          * {@inheritDoc}
          */
-        public function delete($node = false)
+        public function delete($node, $timeout = 0)
         {
             return false;
         }
@@ -80,7 +80,7 @@
         /**
          * {@inheritDoc}
          */
-        public function replace($node, $value = false, $expiration = 0, $flag = 0)
+        public function replace($node, $value, $expiration = 0, $flag = 0)
         {
             return false;
         }
@@ -88,7 +88,7 @@
         /**
          * {@inheritDoc}
          */
-        public function set($node, $value = false, $expiration = 0, $flag = 0)
+        public function set($node, $value, $expiration = 0, $flag = 0)
         {
             return false;
         }

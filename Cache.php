@@ -137,12 +137,12 @@
          * Delete an entry
          *
          * @param string $node
-         * @param int $time When to delete this node.
+         * @param int $timeout When to delete this node.
          * @return bool
          */
-        public function delete($node)
+        public function delete($node, $timeout = 0)
         {
-            return $this->getClient()->delete($this->getPrefix().$node);
+            return $this->getClient()->delete($this->getPrefix().$node, $timeout);
         }
 
         /**

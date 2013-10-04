@@ -52,7 +52,7 @@
         /**
          * {@inheritDoc}
          */
-        public function delete($node = false)
+        public function delete($node, $timeout = 0)
         {
             return parent::delete($node);
         }
@@ -88,7 +88,7 @@
         /**
          * {@inheritDoc}
          */
-        public function replace($node, $value = false, $expiration = 0, $flag = 0)
+        public function replace($node, $value, $expiration = 0, $flag = 0)
         {
             return parent::replace($node, $value, $flag, $expiration);
         }
@@ -96,7 +96,7 @@
         /**
          * {@inheritDoc}
          */
-        public function set($node, $value = false, $expiration = 0, $flag = 0)
+        public function set($node, $value, $expiration = 0, $flag = 0)
         {
             if (MEMCACHE_COMPRESSED === $flag) {
                 return parent::set($node, gzcompress($value, -1), $expiration);

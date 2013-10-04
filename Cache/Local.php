@@ -57,11 +57,19 @@
         /**
          * {@inheritDoc}
          */
-        public function delete($node = false)
+        public function delete($node, $timeout = 0)
         {
             $key = $this->key($node);
             if (array_key_exists($key, $this->data)) {
-                unset($this->data[$key]);
+                if ($timeout) {
+                    $value = $this->get($node);
+                    if ($value) {
+                        $expires = time() + $timeout;
+                        $this->replace($node, $value, $expires);
+                    }
+                } else {
+                    unset($this->data[$key]);
+                }
                 return true;
             }
             return false;
@@ -96,11 +104,7 @@
                      */
                     $item = $this->data[$key];
                     if (!$item->hasExpired()) {
-                        if (MEMCACHE_COMPRESSED === $flag) {
-                            return gzuncompress($item->getContent(), -1);
-                        } else {
-                            return $item->getContent();
-                        }
+                        return $item->getContent();
                     } else {
                         $this->delete($item);
                     }
@@ -127,7 +131,7 @@
         /**
          * {@inheritDoc}
          */
-        public function replace($node, $value = false, $expiration = 0, $flag = 0)
+        public function replace($node, $value, $expiration = 0, $flag = 0)
         {
             return $this->set($node, $value, $expiration, $flag);
         }
@@ -135,17 +139,13 @@
         /**
          * {@inheritDoc}
          */
-        public function set($node, $value = false, $expiration = 0, $flag = 0)
+        public function set($node, $value, $expiration = 0, $flag = 0)
         {
             $key = $this->key($node);
             if (array_key_exists($key, $this->data)) {
                 return false;
             }
-            if (MEMCACHE_COMPRESSED === $flag) {
-                $_node = new Node($node, gzcompress($value, -1), $expiration);
-            } else {
-                $_node = new Node($node, $value, $expiration);
-            }
+            $_node = new Node($node, $value, $expiration);
             $this->data[$key] = $_node;
             return $value;
         }

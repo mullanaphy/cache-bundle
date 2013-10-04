@@ -53,7 +53,7 @@
         /**
          * {@inheritDoc}
          */
-        public function delete($node = false)
+        public function delete($node, $timeout = 0)
         {
             return apc_delete($node);
         }
@@ -71,7 +71,7 @@
          */
         public function get($node, $flag = 0)
         {
-            if (\MEMCACHE_COMPRESSED === $flag) {
+            if (MEMCACHE_COMPRESSED === $flag) {
                 return gzuncompress(apc_fetch($node), -1);
             } else {
                 return apc_fetch($node);
@@ -89,9 +89,9 @@
         /**
          * {@inheritDoc}
          */
-        public function replace($node, $value = false, $expiration = 0, $flag = 0)
+        public function replace($node, $value, $expiration = 0, $flag = 0)
         {
-            if (\MEMCACHE_COMPRESSED === $flag) {
+            if (MEMCACHE_COMPRESSED === $flag) {
                 return apc_store($node, gzcompress($value), $expiration);
             } else {
                 return apc_store($node, $value, $expiration);
@@ -101,9 +101,9 @@
         /**
          * {@inheritDoc}
          */
-        public function set($node, $value = false, $expiration = 0, $flag = 0)
+        public function set($node, $value, $expiration = 0, $flag = 0)
         {
-            if (\MEMCACHE_COMPRESSED === $flag) {
+            if (MEMCACHE_COMPRESSED === $flag) {
                 return apc_add($node, gzcompress($value), $expiration);
             } else {
                 return apc_add($node, $value, $expiration);

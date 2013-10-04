@@ -73,11 +73,19 @@
         /**
          * {@inheritDoc}
          */
-        public function delete($node)
+        public function delete($node, $timeout = 0)
         {
             $file = $this->file($node);
             if (is_writeable($file)) {
-                unlink($file);
+                if ($timeout) {
+                    $value = $this->get($node);
+                    if ($value) {
+                        $expires = time() + $timeout;
+                        $this->replace($node, $value, $expires);
+                    }
+                } else {
+                    unlink($file);
+                }
                 return true;
             }
             return false;
@@ -93,7 +101,7 @@
                 $ignore = array('.', '..');
                 while (false !== ($file = readdir($DIR))) {
                     if (!in_array($file, $ignore)) {
-                        unlink($this->location . DIRECTORY_SEPARATOR . $file);
+                        unlink($this->location.DIRECTORY_SEPARATOR.$file);
                     }
                 }
                 closedir($DIR);
@@ -155,7 +163,7 @@
         /**
          * {@inheritDoc}
          */
-        public function replace($node, $value = false, $expiration = 0, $flag = 0)
+        public function replace($node, $value, $expiration = 0, $flag = 0)
         {
             $file = $this->file($node);
             if (is_writeable($file)) {
@@ -167,7 +175,7 @@
         /**
          * {@inheritDoc}
          */
-        public function set($node, $value = false, $expiration = 0, $flag = 0)
+        public function set($node, $value, $expiration = 0, $flag = 0)
         {
             $file = $this->file($node);
             if (is_file($file)) {
@@ -193,7 +201,7 @@
          */
         private function file($node)
         {
-            return $this->location . md5($node) . '.cache';
+            return $this->location.md5($node).'.cache';
         }
 
         /**
@@ -228,7 +236,7 @@
          */
         private function openStats()
         {
-            $file = $this->location . DIRECTORY_SEPARATOR . '__phy_stats';
+            $file = $this->location.DIRECTORY_SEPARATOR.'__phy_stats';
             $this->STATS = fopen($file, 'w+');
             $stats = fread($this->STATS, filesize($file));
             if ($stats) {

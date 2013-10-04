@@ -29,7 +29,7 @@
 
         protected $label = '';
         protected $created = '';
-        protected $expires = '';
+        protected $expires = 0;
         protected $content = '';
 
         /**
@@ -39,7 +39,7 @@
          * @param mixed $content
          * @param int $expires
          */
-        public function __construct($label = '', $content = '', $expires = '')
+        public function __construct($label = '', $content = '', $expires = 0)
         {
             $this->created = time();
             $this->setLabel($label);
@@ -62,10 +62,10 @@
         /**
          * Set a node's expiration date.
          *
-         * @param string $expires
+         * @param int|string $expires
          * @return self
          */
-        public function setExpires($expires = '')
+        public function setExpires($expires = 0)
         {
             if (!$expires) {
                 return $this;
