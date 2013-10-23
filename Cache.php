@@ -130,7 +130,7 @@
          */
         public function decrement($node, $decrement = 1)
         {
-            return $this->getClient()->decrement($this->getPrefixed($node), $decrement);
+            return $this->getClient()->decrement($this->getPrefixedValues($node), $decrement);
         }
 
         /**
@@ -142,7 +142,7 @@
          */
         public function delete($node, $timeout = 0)
         {
-            return $this->getClient()->delete($this->getPrefixed($node), $timeout);
+            return $this->getClient()->delete($this->getPrefixedValues($node), $timeout);
         }
 
         /**
@@ -167,7 +167,7 @@
             if (-1 === $flag) {
                 $flag = $this->getCompression();
             }
-            return $this->getClient()->get($this->getPrefixed($node), $flag);
+            return $this->getClient()->get($this->getPrefixedValues($node), $flag);
         }
 
         /**
@@ -179,7 +179,7 @@
          */
         public function increment($node, $increment = 1)
         {
-            return $this->getClient()->increment($this->getPrefixed($node), $increment);
+            return $this->getClient()->increment($this->getPrefixedValues($node), $increment);
         }
 
         /**
@@ -199,7 +199,7 @@
             if (-1 === $flag) {
                 $flag = $this->getCompression();
             }
-            return $this->getClient()->replace($this->getPrefixed($node), $value, $expiration, $flag);
+            return $this->getClient()->replace($this->getPrefixedKeys($node), $value, $expiration, $flag);
         }
 
         /**
@@ -219,7 +219,7 @@
             if (-1 === $flag) {
                 $flag = $this->getCompression();
             }
-            return $this->getClient()->set($this->getPrefixed($node), $value, $expiration, $flag);
+            return $this->getClient()->set($this->getPrefixedKeys($node), $value, $expiration, $flag);
         }
 
         /**
@@ -248,15 +248,36 @@
          * @param array|string $node
          * @return array|string
          */
-        public function getPrefixed($node)
+        public function getPrefixedKeys($node)
         {
             $prefix = $this->getPrefix();
+            $add = function ($item) use ($prefix) {
+                return $prefix.$item;
+            };
             if (is_array($node)) {
-                $node = array_map(function ($item) use ($prefix) {
-                    return $prefix.$item;
-                }, $node);
+                $node = array_combine(array_map($add, array_keys($node)), array_values($node));
             } else {
-                $node = $prefix.$node;
+                $node = $add($node);
+            }
+            return $node;
+        }
+
+        /**
+         * Get a prefixed string or array of strings.
+         *
+         * @param array|string $node
+         * @return array|string
+         */
+        public function getPrefixedValues($node)
+        {
+            $prefix = $this->getPrefix();
+            $add = function ($item) use ($prefix) {
+                return $prefix.$item;
+            };
+            if (is_array($node)) {
+                $node = array_map($add, $node);
+            } else {
+                $node = $add($node);
             }
             return $node;
         }
