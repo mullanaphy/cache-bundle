@@ -34,16 +34,16 @@
         /**
          * Decrement a node by $decrement.
          *
-         * @param string $node
+         * @param array|string $node
          * @param int $decrement
          * @return bool
          */
         public function decrement($node, $decrement = 1);
 
         /**
-         * Delete an entry
+         * Delete node(s)
          *
-         * @param string $node
+         * @param array|string $node
          * @param int $timeout When to delete this node.
          * @return bool
          */
@@ -59,7 +59,7 @@
         /**
          * Grab a node if it exists.
          *
-         * @param string $node
+         * @param array|string $node
          * @param int $flag
          * @return mixed
          */
@@ -68,7 +68,7 @@
         /**
          * Increment a node by $increment.
          *
-         * @param string $node
+         * @param array|string $node
          * @param int $increment
          * @return bool
          */
@@ -77,8 +77,8 @@
         /**
          * Replace a node with new data. WARNING: No fault tolerance built in.
          *
-         * @param string $node
-         * @param mixed $value
+         * @param array|string $node
+         * @param mixed $value If $node is an array, ignore.
          * @param int $flag
          * @param int $expiration
          * @return bool
@@ -88,8 +88,8 @@
         /**
          * Store a new key into the memory table.
          *
-         * @param string $node
-         * @param mixed $value
+         * @param array|string $node
+         * @param mixed $value If $node is an array, ignore.
          * @param int $flag
          * @param int $expiration
          * @return bool

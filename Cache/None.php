@@ -106,6 +106,6 @@
          */
         public function getName()
         {
-            return 'Local';
+            return 'None';
         }
     }

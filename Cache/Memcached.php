@@ -46,7 +46,16 @@
          */
         public function decrement($node, $decrement = 1)
         {
-            return parent::decrement($node, $decrement);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = $func($key, $decrement);
+                }
+                return $rows;
+            } else {
+                return parent::decrement($node, $decrement);
+            }
         }
 
         /**
@@ -54,7 +63,16 @@
          */
         public function delete($node, $timeout = 0)
         {
-            return parent::delete($node);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = $func($key, $timeout);
+                }
+                return $rows;
+            } else {
+                return parent::delete($node);
+            }
         }
 
         /**
@@ -70,10 +88,19 @@
          */
         public function get($node, $flag = 0)
         {
-            if (MEMCACHE_COMPRESSED === $flag) {
-                return gzuncompress(parent::get($node), -1);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = $func($key, $flag);
+                }
+                return $rows;
             } else {
-                return parent::get($node);
+                if (MEMCACHE_COMPRESSED === $flag) {
+                    return gzuncompress(parent::get($node), -1);
+                } else {
+                    return parent::get($node);
+                }
             }
         }
 
@@ -82,7 +109,16 @@
          */
         public function increment($node, $increment = 1)
         {
-            return parent::increment($node, $increment);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = $func($key, $increment);
+                }
+                return $rows;
+            } else {
+                return parent::increment($node, $increment);
+            }
         }
 
         /**
@@ -90,7 +126,23 @@
          */
         public function replace($node, $value, $expiration = 0, $flag = 0)
         {
-            return parent::replace($node, $value, $flag, $expiration);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $return = [];
+                foreach ($node as $key => $v) {
+                    $return[$key] = $func($key, $v, $value, $expiration);
+                }
+                return $return;
+            } else {
+                $compressor = function ($value) {
+                    return gzcompress($value, -1);
+                };
+                if (MEMCACHE_COMPRESSED === $flag) {
+                    return parent::replace($node, $compressor($value), $flag, $expiration);
+                } else {
+                    return parent::replace($node, $value, $expiration);
+                }
+            }
         }
 
         /**
@@ -98,10 +150,22 @@
          */
         public function set($node, $value, $expiration = 0, $flag = 0)
         {
-            if (MEMCACHE_COMPRESSED === $flag) {
-                return parent::set($node, gzcompress($value, -1), $expiration);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $return = [];
+                foreach ($node as $key => $v) {
+                    $return[$key] = $func($key, $v, $value, $expiration);
+                }
+                return $return;
             } else {
-                return parent::set($node, $value, $expiration);
+                $compressor = function ($value) {
+                    return gzcompress($value, -1);
+                };
+                if (MEMCACHE_COMPRESSED === $flag) {
+                    return parent::set($node, $compressor($node), $expiration);
+                } else {
+                    return parent::set($node, $value, $expiration);
+                }
             }
         }
 
@@ -110,6 +174,6 @@
          */
         public function getName()
         {
-            return 'Local';
+            return 'Memcached';
         }
     }

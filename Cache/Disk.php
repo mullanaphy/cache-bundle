@@ -60,13 +60,22 @@
          */
         public function decrement($node, $decrement = 1)
         {
-            $value = $this->get($node);
-            if (false !== $value) {
-                $value -= $decrement;
-                return $this->replace($node, $value);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = $func($key, $decrement);
+                }
+                return $rows;
             } else {
-                $value = 0 - $decrement;
-                return $this->set($node, $value);
+                $value = $this->get($node);
+                if (false !== $value) {
+                    $value -= $decrement;
+                    return $this->replace($node, $value);
+                } else {
+                    $value = 0 - $decrement;
+                    return $this->set($node, $value);
+                }
             }
         }
 
@@ -75,20 +84,29 @@
          */
         public function delete($node, $timeout = 0)
         {
-            $file = $this->file($node);
-            if (is_writeable($file)) {
-                if ($timeout) {
-                    $value = $this->get($node);
-                    if ($value) {
-                        $expires = time() + $timeout;
-                        $this->replace($node, $value, $expires);
-                    }
-                } else {
-                    unlink($file);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = $func($key, $timeout);
                 }
-                return true;
+                return $rows;
+            } else {
+                $file = $this->file($node);
+                if (is_writeable($file)) {
+                    if ($timeout) {
+                        $value = $this->get($node);
+                        if ($value) {
+                            $expires = time() + $timeout;
+                            $this->replace($node, $value, $expires);
+                        }
+                    } else {
+                        unlink($file);
+                    }
+                    return true;
+                }
+                return false;
             }
-            return false;
         }
 
         /**
@@ -150,13 +168,22 @@
          */
         public function increment($node, $increment = 1)
         {
-            $value = $this->get($node);
-            if (false !== $value) {
-                $value += $increment;
-                return $this->replace($node, $value);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = $func($key, $increment);
+                }
+                return $rows;
             } else {
-                $value = $increment;
-                return $this->set($node, $value);
+                $value = $this->get($node);
+                if (false !== $value) {
+                    $value += $increment;
+                    return $this->replace($node, $value);
+                } else {
+                    $value = $increment;
+                    return $this->set($node, $value);
+                }
             }
         }
 
@@ -165,11 +192,20 @@
          */
         public function replace($node, $value, $expiration = 0, $flag = 0)
         {
-            $file = $this->file($node);
-            if (is_writeable($file)) {
-                unlink($file);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key => $v) {
+                    $rows[$key] = $func($key, $v, $value, $expiration);
+                }
+                return $rows;
+            } else {
+                $file = $this->file($node);
+                if (is_writeable($file)) {
+                    unlink($file);
+                }
+                return $this->set($node, $value, $expiration, $flag);
             }
-            return $this->set($node, $value, $expiration, $flag);
         }
 
         /**
@@ -177,20 +213,29 @@
          */
         public function set($node, $value, $expiration = 0, $flag = 0)
         {
-            $file = $this->file($node);
-            if (is_file($file)) {
-                return false;
-            }
-            $_node = new Node($node, $value, $expiration);
-            $FILE = fopen($file, 'w+');
-            if (MEMCACHE_COMPRESSED === $flag) {
-                fwrite($FILE, gzcompress(serialize($_node), -1));
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key => $v) {
+                    $rows[$key] = $func($key, $v, $value, $expiration);
+                }
+                return $rows;
             } else {
-                fwrite($FILE, serialize($_node));
+                $file = $this->file($node);
+                if (is_file($file)) {
+                    return false;
+                }
+                $_node = new Node($node, $value, $expiration);
+                $FILE = fopen($file, 'w+');
+                if (MEMCACHE_COMPRESSED === $flag) {
+                    fwrite($FILE, gzcompress(serialize($_node), -1));
+                } else {
+                    fwrite($FILE, serialize($_node));
+                }
+                fclose($FILE);
+                ++$this->stats['set'];
+                return $value;
             }
-            fclose($FILE);
-            ++$this->stats['set'];
-            return $value;
         }
 
         /**

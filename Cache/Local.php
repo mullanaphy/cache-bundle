@@ -44,13 +44,22 @@
          */
         public function decrement($node, $decrement = 1)
         {
-            $value = $this->get($node);
-            if ($value !== false) {
-                $value -= $decrement;
-                return $this->replace($node, $value);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = $func($key, $decrement);
+                }
+                return $rows;
             } else {
-                $value = 0 - $decrement;
-                return $this->set($node, $value);
+                $value = $this->get($node);
+                if ($value !== false) {
+                    $value -= $decrement;
+                    return $this->replace($node, $value);
+                } else {
+                    $value = 0 - $decrement;
+                    return $this->set($node, $value);
+                }
             }
         }
 
@@ -59,20 +68,29 @@
          */
         public function delete($node, $timeout = 0)
         {
-            $key = $this->key($node);
-            if (array_key_exists($key, $this->data)) {
-                if ($timeout) {
-                    $value = $this->get($node);
-                    if ($value) {
-                        $expires = time() + $timeout;
-                        $this->replace($node, $value, $expires);
-                    }
-                } else {
-                    unset($this->data[$key]);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = $func($key, $timeout);
                 }
-                return true;
+                return $rows;
+            } else {
+                $key = $this->key($node);
+                if (array_key_exists($key, $this->data)) {
+                    if ($timeout) {
+                        $value = $this->get($node);
+                        if ($value) {
+                            $expires = time() + $timeout;
+                            $this->replace($node, $value, $expires);
+                        }
+                    } else {
+                        unset($this->data[$key]);
+                    }
+                    return true;
+                }
+                return false;
             }
-            return false;
         }
 
         /**
@@ -118,13 +136,22 @@
          */
         public function increment($node, $increment = 1)
         {
-            $value = $this->get($node);
-            if ($value !== false) {
-                $value += $increment;
-                return $this->replace($node, $value);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = $func($key, $increment);
+                }
+                return $rows;
             } else {
-                $value = $increment;
-                return $this->set($node, $value);
+                $value = $this->get($node);
+                if ($value !== false) {
+                    $value += $increment;
+                    return $this->replace($node, $value);
+                } else {
+                    $value = $increment;
+                    return $this->set($node, $value);
+                }
             }
         }
 
@@ -133,7 +160,16 @@
          */
         public function replace($node, $value, $expiration = 0, $flag = 0)
         {
-            return $this->set($node, $value, $expiration, $flag);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key => $v) {
+                    $rows[$key] = $func($key, $v, $value, $expiration);
+                }
+                return $rows;
+            } else {
+                return $this->set($node, $value, $expiration, $flag);
+            }
         }
 
         /**
@@ -141,13 +177,22 @@
          */
         public function set($node, $value, $expiration = 0, $flag = 0)
         {
-            $key = $this->key($node);
-            if (array_key_exists($key, $this->data)) {
-                return false;
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key => $v) {
+                    $rows[$key] = $func($key, $v, $value, $expiration);
+                }
+                return $rows;
+            } else {
+                $key = $this->key($node);
+                if (array_key_exists($key, $this->data)) {
+                    return false;
+                }
+                $_node = new Node($node, $value, $expiration);
+                $this->data[$key] = $_node;
+                return $value;
             }
-            $_node = new Node($node, $value, $expiration);
-            $this->data[$key] = $_node;
-            return $value;
         }
 
         /**

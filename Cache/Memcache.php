@@ -56,7 +56,13 @@
          */
         public function decrement($node, $decrement = 1)
         {
-            parent::decrement($node, $decrement);
+            if (is_array($node)) {
+                foreach ($node as $key) {
+                    parent::decrement($key, $decrement);
+                }
+            } else {
+                parent::decrement($node, $decrement);
+            }
         }
 
         /**
@@ -64,7 +70,13 @@
          */
         public function increment($node, $increment = 1)
         {
-            parent::increment($node, $increment);
+            if (is_array($node)) {
+                foreach ($node as $key) {
+                    parent::increment($key, $increment);
+                }
+            } else {
+                parent::increment($node, $increment);
+            }
         }
 
         /**
@@ -72,7 +84,15 @@
          */
         public function set($node, $value, $expiration = 0, $flag = 0)
         {
-            return parent::set($node, $value, $flag, $expiration);
+            if (is_array($node)) {
+                $return = [];
+                foreach ($node as $key => $v) {
+                    $return[$key] = parent::set($key, $v, $value, $expiration);
+                }
+                return $return;
+            } else {
+                return parent::set($node, $value, $flag, $expiration);
+            }
         }
 
         /**
@@ -80,7 +100,14 @@
          */
         public function replace($node, $value, $expiration = 0, $flag = 0)
         {
-            return $node;
+            if (is_array($node)) {
+                foreach ($node as $key => $v) {
+                    parent::replace($key, $v, $value, $expiration);
+                }
+            } else {
+                parent::replace($node, $value, $flag, $expiration);
+            }
+            return true;
         }
 
         /**
@@ -96,7 +123,14 @@
          */
         public function delete($node, $timeout = 0)
         {
-            return parent::delete($node, $timeout);
+            if (is_array($node)) {
+                foreach ($node as $key) {
+                    parent::delete($key, $timeout);
+                }
+            } else {
+                parent::delete($node, $timeout);
+            }
+            return true;
         }
 
         /**
@@ -104,7 +138,7 @@
          */
         public function getName()
         {
-            return 'Local';
+            return 'Memcache';
         }
 
     }

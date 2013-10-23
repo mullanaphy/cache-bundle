@@ -47,7 +47,16 @@
          */
         public function decrement($node, $decrement = 1)
         {
-            return apc_dec($node, $decrement);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = $func($key, $decrement);
+                }
+                return $rows;
+            } else {
+                return apc_dec($node, $decrement);
+            }
         }
 
         /**
@@ -55,7 +64,16 @@
          */
         public function delete($node, $timeout = 0)
         {
-            return apc_delete($node);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = $func($key, $timeout);
+                }
+                return $rows;
+            } else {
+                return apc_delete($node);
+            }
         }
 
         /**
@@ -71,10 +89,19 @@
          */
         public function get($node, $flag = 0)
         {
-            if (MEMCACHE_COMPRESSED === $flag) {
-                return gzuncompress(apc_fetch($node), -1);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = $func($key, $flag);
+                }
+                return $rows;
             } else {
-                return apc_fetch($node);
+                if (MEMCACHE_COMPRESSED === $flag) {
+                    return gzuncompress(apc_fetch($node), -1);
+                } else {
+                    return apc_fetch($node);
+                }
             }
         }
 
@@ -83,7 +110,16 @@
          */
         public function increment($node, $increment = 1)
         {
-            return apc_inc($node, $increment);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = $func($key, $increment);
+                }
+                return $rows;
+            } else {
+                return apc_inc($node, $increment);
+            }
         }
 
         /**
@@ -91,10 +127,19 @@
          */
         public function replace($node, $value, $expiration = 0, $flag = 0)
         {
-            if (MEMCACHE_COMPRESSED === $flag) {
-                return apc_store($node, gzcompress($value), $expiration);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key => $v) {
+                    $rows[$key] = $func($key, $v, $value, $expiration);
+                }
+                return $rows;
             } else {
-                return apc_store($node, $value, $expiration);
+                if (MEMCACHE_COMPRESSED === $flag) {
+                    return apc_store($node, gzcompress($value), $expiration);
+                } else {
+                    return apc_store($node, $value, $expiration);
+                }
             }
         }
 
@@ -103,10 +148,19 @@
          */
         public function set($node, $value, $expiration = 0, $flag = 0)
         {
-            if (MEMCACHE_COMPRESSED === $flag) {
-                return apc_add($node, gzcompress($value), $expiration);
+            if (is_array($node)) {
+                $func = __FUNCTION__;
+                $rows = array();
+                foreach ($node as $key => $v) {
+                    $rows[$key] = $func($key, $v, $value, $expiration);
+                }
+                return $rows;
             } else {
-                return apc_add($node, $value, $expiration);
+                if (MEMCACHE_COMPRESSED === $flag) {
+                    return apc_add($node, gzcompress($value), $expiration);
+                } else {
+                    return apc_add($node, $value, $expiration);
+                }
             }
         }
 
