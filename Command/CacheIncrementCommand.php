@@ -21,16 +21,16 @@
     use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
     /**
-     * This will allow us to flush the cache via:
-     * php app/console phy:cache:flush
+     * This will allow us to increment a cache key via:
+     * php app/console phy:cache:increment --key=KEY --value=VALUE
      *
-     * @package PHY\CacheBundle\Command\CacheFlushCommand
+     * @package PHY\CacheBundle\Command\CacheIncrementCommand
      * @category PHY\CacheBundle
      * @copyright Copyright (c) 2013 John Mullanaphy (http://jo.mu/)
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class CacheFlushCommand extends ContainerAwareCommand
+    class CacheIncrementCommand extends ContainerAwareCommand
     {
 
         /**
@@ -38,7 +38,9 @@
          */
         protected function configure()
         {
-            $this->setName('phy:cache:flush')->setDescription('Flush our entire cache.');
+            $this->setName('phy:cache:increment')->setDescription('Increment a cache key.')
+                ->addOption('key', 'k', InputOption::VALUE_REQUIRED, 'Where to store the key.')
+                ->addOption('value', 'v', InputOption::VALUE_REQUIRED, 'Incrementing value.', '1');
         }
 
         /**
@@ -53,11 +55,13 @@
              * @var \PHY\CacheBundle\Cache $cache
              */
             $cache = $this->getContainer()->get('phy_cache');
-            $output->writeln('Flushing '.$cache->getName().' cache.');
-            if ($cache->flush()) {
-                $output->writeln('<info>Successfully flushed the cache!</info>');
+            $key = $input->getOption('key');
+            $value = $input->getOption('value');
+            $output->writeln('Incrementing key '.$key.' by '.$value.' in cache '.$cache->getName().'.');
+            if ($cache->increment($key, $value)) {
+                $output->writeln('<info>Incremented by '.$value.'!</info>');
             } else {
-                $output->writeln('<error>Could not flush the cache... Sorry Charlie...</error>');
+                $output->writeln('<error>Incremented by absolutely nothing...</error>');
             }
         }
 

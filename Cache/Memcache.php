@@ -91,7 +91,7 @@
                 }
                 return $return;
             } else {
-                return parent::set($node, $value, $flag, $expiration);
+                return parent::set($node, $value, (int)$flag, $expiration);
             }
         }
 
@@ -105,7 +105,7 @@
                     parent::replace($key, $v, $value, $expiration);
                 }
             } else {
-                parent::replace($node, $value, $flag, $expiration);
+                parent::replace($node, $value, (int)$flag, $expiration);
             }
             return true;
         }
@@ -115,6 +115,7 @@
          */
         public function get($node, $flag = 0)
         {
+            $flag = (int)$flag;
             return parent::get($node, $flag);
         }
 

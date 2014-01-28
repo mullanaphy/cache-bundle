@@ -19,6 +19,7 @@
     use Symfony\Component\Console\Input\InputInterface;
     use Symfony\Component\Console\Output\OutputInterface;
     use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+    use PHY\CacheBundle\Helper\CacheHelper;
 
     /**
      * Get an output of our cache stats.
@@ -37,7 +38,8 @@
          */
         protected function configure()
         {
-            $this->setName('phy:cache:stats')->setDescription('See whatever stats we can about our currently running cache.');
+            $this->setName('phy:cache:stats')
+                ->setDescription('See whatever stats we can about our currently running cache.');
         }
 
         /**
@@ -49,10 +51,11 @@
         protected function execute(InputInterface $input, OutputInterface $output)
         {
             /**
-             * @var Cache $cache
+             * @var \PHY\CacheBundle\Cache $cache
              */
             $cache = $this->getContainer()->get('phy_cache');
-            $stats = json_encode($cache->getStats(), JSON_PRETTY_PRINT);
+            $helper = new CacheHelper;
+            $stats = $helper->prettyJson($cache->getStats());
             $output->writeln($stats);
         }
 

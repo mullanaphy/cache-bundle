@@ -21,16 +21,16 @@
     use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
     /**
-     * This will allow us to flush the cache via:
-     * php app/console phy:cache:flush
+     * This will allow us to set a cache key via:
+     * php app/console phy:cache:set --key=KEY --value=VALUE
      *
-     * @package PHY\CacheBundle\Command\CacheFlushCommand
+     * @package PHY\CacheBundle\Command\CacheSetCommand
      * @category PHY\CacheBundle
      * @copyright Copyright (c) 2013 John Mullanaphy (http://jo.mu/)
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class CacheFlushCommand extends ContainerAwareCommand
+    class CacheSetCommand extends ContainerAwareCommand
     {
 
         /**
@@ -38,7 +38,11 @@
          */
         protected function configure()
         {
-            $this->setName('phy:cache:flush')->setDescription('Flush our entire cache.');
+            $this->setName('phy:cache:set')->setDescription('Set a cache key.')
+                ->addOption('key', 'k', InputOption::VALUE_REQUIRED, 'Where to store the key.')
+                ->addOption('value', 'v', InputOption::VALUE_REQUIRED, 'Cache key\'s value.')
+                ->addOption('expiration', 'e', InputOption::VALUE_REQUIRED, 'Key\'s timeout (0 for unlimited).', '1800')
+                ->addOption('compress', 'c', InputOption::VALUE_REQUIRED, 'Compress data in cache.', '0');
         }
 
         /**
@@ -53,11 +57,13 @@
              * @var \PHY\CacheBundle\Cache $cache
              */
             $cache = $this->getContainer()->get('phy_cache');
-            $output->writeln('Flushing '.$cache->getName().' cache.');
-            if ($cache->flush()) {
-                $output->writeln('<info>Successfully flushed the cache!</info>');
+            $key = $input->getOption('key');
+            $value = $input->getOption('value');
+            $output->writeln('Storing "'.$value.'" in key '.$key.' in cache '.$cache->getName().'.');
+            if ($cache->set($key, $value, $input->getOption('expiration'), $input->getOption('compress'))) {
+                $output->writeln('<info>SAVED!</info>');
             } else {
-                $output->writeln('<error>Could not flush the cache... Sorry Charlie...</error>');
+                $output->writeln('<error>NOT SAVED!</error>');
             }
         }
 
