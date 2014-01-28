@@ -39,8 +39,8 @@
         protected function configure()
         {
             $this->setName('phy:cache:decrement')->setDescription('Decrement a cache key.')
-                ->addOption('key', 'K', InputOption::VALUE_REQUIRED, 'Where to store the key.')
-                ->addOption('value', 'V', InputOption::VALUE_REQUIRED, 'Decrementing value.', '1');
+                ->addOption('key', null, InputOption::VALUE_REQUIRED, 'Where to store the key.')
+                ->addOption('value', null, InputOption::VALUE_REQUIRED, 'Decrementing value.', '1');
         }
 
         /**
