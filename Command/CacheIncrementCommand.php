@@ -39,8 +39,8 @@
         protected function configure()
         {
             $this->setName('phy:cache:increment')->setDescription('Increment a cache key.')
-                ->addOption('key', 'k', InputOption::VALUE_REQUIRED, 'Where to store the key.')
-                ->addOption('value', 'v', InputOption::VALUE_REQUIRED, 'Incrementing value.', '1');
+                ->addOption('key', 'K', InputOption::VALUE_REQUIRED, 'Where to store the key.')
+                ->addOption('value', 'V', InputOption::VALUE_REQUIRED, 'Incrementing value.', '1');
         }
 
         /**

@@ -40,8 +40,8 @@
         protected function configure()
         {
             $this->setName('phy:cache:get')->setDescription('Get a cache key.')
-                ->addOption('key', 'k', InputOption::VALUE_REQUIRED, 'Where to store the key.')
-                ->addOption('compress', 'c', InputOption::VALUE_REQUIRED, 'Compress data in cache.', '0');
+                ->addOption('key', 'K', InputOption::VALUE_REQUIRED, 'Where to store the key.')
+                ->addOption('compress', 'C', InputOption::VALUE_REQUIRED, 'Compress data in cache.', '0');
         }
 
         /**

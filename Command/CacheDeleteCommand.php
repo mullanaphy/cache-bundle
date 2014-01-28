@@ -39,7 +39,7 @@
         protected function configure()
         {
             $this->setName('phy:cache:delete')->setDescription('Delete a cache key.')
-                ->addOption('key', 'k', InputOption::VALUE_REQUIRED, 'Where to store the key.');
+                ->addOption('key', 'K', InputOption::VALUE_REQUIRED, 'Where to store the key.');
         }
 
         /**

@@ -39,10 +39,10 @@
         protected function configure()
         {
             $this->setName('phy:cache:set')->setDescription('Set a cache key.')
-                ->addOption('key', 'k', InputOption::VALUE_REQUIRED, 'Where to store the key.')
-                ->addOption('value', 'v', InputOption::VALUE_REQUIRED, 'Cache key\'s value.')
-                ->addOption('expiration', 'e', InputOption::VALUE_REQUIRED, 'Key\'s timeout (0 for unlimited).', '1800')
-                ->addOption('compress', 'c', InputOption::VALUE_REQUIRED, 'Compress data in cache.', '0');
+                ->addOption('key', 'K', InputOption::VALUE_REQUIRED, 'Where to store the key.')
+                ->addOption('value', 'V', InputOption::VALUE_REQUIRED, 'Cache key\'s value.')
+                ->addOption('expiration', 'E', InputOption::VALUE_REQUIRED, 'Key\'s timeout (0 for unlimited).', '1800')
+                ->addOption('compress', 'C', InputOption::VALUE_REQUIRED, 'Compress data in cache.', '0');
         }
 
         /**
