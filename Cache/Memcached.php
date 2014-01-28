@@ -128,7 +128,7 @@
         {
             if (is_array($node)) {
                 $func = __FUNCTION__;
-                $return = [];
+                $return = array();
                 foreach ($node as $key => $v) {
                     $return[$key] = $func($key, $v, $value, $expiration);
                 }
@@ -152,7 +152,7 @@
         {
             if (is_array($node)) {
                 $func = __FUNCTION__;
-                $return = [];
+                $return = array();
                 foreach ($node as $key => $v) {
                     $return[$key] = $func($key, $v, $value, $expiration);
                 }

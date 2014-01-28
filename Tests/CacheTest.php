@@ -71,10 +71,10 @@
         public function testSetMultiAndGet()
         {
             $cache = $this->getCache();
-            $cache->set([
+            $cache->set(array(
                 'key1' => 123,
                 'key2' => 1234
-            ]);
+            ));
             $this->assertEquals(123, $cache->get('key1'));
             $this->assertEquals(1234, $cache->get('key2'));
         }
@@ -88,14 +88,14 @@
         public function testGetMulti()
         {
             $cache = $this->getCache();
-            $cache->set([
+            $cache->set(array(
                 'key1' => 123,
                 'key2' => 1234
-            ]);
-            $this->assertEquals([
+            ));
+            $this->assertEquals(array(
                 'key1' => 123,
                 'key2' => 1234
-            ], $cache->get(['key1', 'key2']));
+            ), $cache->get(array('key1', 'key2')));
         }
 
         public function testReplace()
@@ -111,14 +111,14 @@
             $cache = $this->getCache();
             $cache->set('key1', 123);
             $cache->set('key2', 1234);
-            $cache->replace([
+            $cache->replace(array(
                 'key1' => 1234,
                 'key2' => 12345
-            ]);
-            $this->assertEquals([
+            ));
+            $this->assertEquals(array(
                 'key1' => 1234,
                 'key2' => 12345
-            ], $cache->get(['key1', 'key2']));
+            ), $cache->get(array('key1', 'key2')));
         }
 
         public function testDecrement()
@@ -142,11 +142,11 @@
             $cache = $this->getCache();
             $cache->set('key1', 3);
             $cache->set('key2', 2);
-            $cache->decrement(['key1', 'key2']);
-            $this->assertEquals([
+            $cache->decrement(array('key1', 'key2'));
+            $this->assertEquals(array(
                 'key1' => 2,
                 'key2' => 1
-            ], $cache->get(['key1', 'key2']));
+            ), $cache->get(array('key1', 'key2')));
         }
 
         public function testIncrement()

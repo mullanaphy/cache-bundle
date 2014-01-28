@@ -85,7 +85,7 @@
         public function set($node, $value, $expiration = 0, $flag = 0)
         {
             if (is_array($node)) {
-                $return = [];
+                $return = array();
                 foreach ($node as $key => $v) {
                     $return[$key] = parent::set($key, $v, $value, $expiration);
                 }
