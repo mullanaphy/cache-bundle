@@ -54,7 +54,7 @@ Disk
 parameters:
     phy_cache.class: PHY\CacheBundle\Cache\Disk
     phy_cache.settings:
-      location: '/var/tmp/cache/'
+      location: /var/tmp/cache/
     phy_cache.expiration: 300
     phy_cache.compression: 0
 ```
@@ -65,6 +65,19 @@ parameters:
     phy_cache.class: PHY\CacheBundle\Cache\Apc
     phy_cache.settings:
       mode: opcode
+    phy_cache.prefix: phy_
+    phy_cache.expiration: 300
+    phy_cache.compression: 0
+```
+
+Redis
+```yaml
+parameters:
+    phy_cache.class: PHY\CacheBundle\Cache\Redis
+    phy_cache.settings:
+      server: 127.0.0.1
+      port: 6379
+      password: pants
     phy_cache.prefix: phy_
     phy_cache.expiration: 300
     phy_cache.compression: 0
@@ -108,6 +121,26 @@ php app/console phy:cache:stats
 And flushing your cache completely
 ```
 php app/console phy:cache:flush
+```
+
+Set something
+```
+php app/console phy:cache:set --key something --value 3 --compress 0 --expires 40
+```
+
+Get something
+```
+php app/console phy:cache:get --key something --compress 0
+```
+
+Delete something
+```
+php app/console phy:cache:delete --key something
+```
+
+Decrement something
+```
+php app/console phy:cache:decrement --key something --value 3
 ```
 
 About

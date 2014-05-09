@@ -61,6 +61,9 @@
             $this->assertInstanceOf('PHY\CacheBundle\Cache', $this->container->get('phy_cache'));
         }
 
+        /**
+         * Test our basic set/get.
+         */
         public function testSetAndGet()
         {
             $cache = $this->getCache();
@@ -68,6 +71,9 @@
             $this->assertEquals(123, $cache->get('key1'));
         }
 
+        /**
+         * Test a multi set and make sure we get the goods back.
+         */
         public function testSetMultiAndGet()
         {
             $cache = $this->getCache();
@@ -79,12 +85,18 @@
             $this->assertEquals(1234, $cache->get('key2'));
         }
 
+        /**
+         * Make sure we get back a null for missing keys.
+         */
         public function testGetDoesntExists()
         {
             $cache = $this->getCache();
             $this->assertIsNull($cache->get('false'));
         }
 
+        /**
+         * Test getting multiple keys back.
+         */
         public function testGetMulti()
         {
             $cache = $this->getCache();
@@ -98,6 +110,9 @@
             ), $cache->get(array('key1', 'key2')));
         }
 
+        /**
+         * Test a replace.
+         */
         public function testReplace()
         {
             $cache = $this->getCache();
@@ -106,6 +121,9 @@
             $this->assertEquals(1234, $cache->get('key1'));
         }
 
+        /**
+         * Test a replace multi.
+         */
         public function testReplaceMulti()
         {
             $cache = $this->getCache();
@@ -121,6 +139,9 @@
             ), $cache->get(array('key1', 'key2')));
         }
 
+        /**
+         * Test a decrement.
+         */
         public function testDecrement()
         {
             $cache = $this->getCache();
@@ -129,14 +150,20 @@
             $this->assertEquals(2, $cache->get('key1'));
         }
 
+        /**
+         * Test a decrement by number.
+         */
         public function testDecrementByNumber()
         {
             $cache = $this->getCache();
             $cache->set('key1', 3);
-            $cache->increment('key1', 2);
+            $cache->decrement('key1', 2);
             $this->assertEquals(1, $cache->get('key1'));
         }
 
+        /**
+         * Test decrementing multiple numbers.
+         */
         public function testDecrementMulti()
         {
             $cache = $this->getCache();
@@ -149,6 +176,9 @@
             ), $cache->get(array('key1', 'key2')));
         }
 
+        /**
+         * Test an increment.
+         */
         public function testIncrement()
         {
             $cache = $this->getCache();
@@ -157,6 +187,9 @@
             $this->assertEquals(2, $cache->get('key1'));
         }
 
+        /**
+         * Test an increment by number.
+         */
         public function testIncrementByNumber()
         {
             $cache = $this->getCache();
@@ -165,6 +198,9 @@
             $this->assertEquals(3, $cache->get('key1'));
         }
 
+        /**
+         * Test a full flush.
+         */
         public function testFlush()
         {
             $cache = $this->getCache();
@@ -173,6 +209,9 @@
             $this->assertIsNull($cache->get('key1'));
         }
 
+        /**
+         * Test changing our prefix.
+         */
         public function testPrefix()
         {
             $cache = $this->getCache();
@@ -180,6 +219,9 @@
             $this->assertEquals('prefix', $cache->getPrefix());
         }
 
+        /**
+         * Test changing our default compression flag.
+         */
         public function testSettingDefaultCompressionFlag()
         {
             $cache = $this->getCache();
@@ -187,6 +229,10 @@
             $this->assertEquals(10, $cache->getCompression());
         }
 
+        /**
+         * Test setting our default expiration. Notice, it's over 9000 because outdated memes are fun and so is being
+         * ironic about them.
+         */
         public function testSettingDefaultExpiration()
         {
             $cache = $this->getCache();
@@ -194,22 +240,26 @@
             $this->assertEquals(9001, $cache->getExpiration());
         }
 
+        /**
+         * Test deleting a key.
+         */
         public function testDelete()
         {
             $cache = $this->getCache();
             $cache->set('key1', 123);
-            $cache->set('key2', 1234);
             $cache->delete('key1');
             $this->assertIsNull($cache->get('key1'));
-            $this->assertEquals(1234, $cache->get('key2'));
         }
 
+        /**
+         * Test deleting multiple keys.
+         */
         public function testDeleteMulti()
         {
             $cache = $this->getCache();
             $cache->set('key1', 123);
             $cache->set('key2', 1234);
-            $cache->delete(['key1', 'key2']);
+            $cache->delete(array('key1', 'key2'));
             $this->assertIsNull($cache->get('key1'));
             $this->assertIsNull($cache->get('key2'));
         }

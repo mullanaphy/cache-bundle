@@ -30,7 +30,6 @@
          * $settings['server'] will try to connect to that server.
          *
          * @param array $settings
-         * @throws Exception If APC caching is not available.
          */
         public function __construct(array $settings = array())
         {

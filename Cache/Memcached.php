@@ -27,12 +27,11 @@
     {
 
         /**
-         * $settings['id'] will set the persistant_id of this Memcached session.
+         * $settings['id'] will set the persistent_id of this Memcached session.
          * $settings['server'] will try to connect to that server and add pools
          * if an array of servers is sent.
          *
          * @param array $settings
-         * @throws Exception If APC caching is not available.
          */
         public function __construct(array $settings = array())
         {
