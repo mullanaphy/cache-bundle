@@ -22,13 +22,11 @@
      * @copyright Copyright (c) 2013 John Mullanaphy (http://jo.mu/)
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
-     * @todo Stats aren't 100% accurate as multiple processes can be writing to it...
      */
     class Disk implements CacheInterface
     {
 
         private $location = '';
-        private $stats = array('connect' => 0, 'success' => 0, 'failure' => 0, 'set' => 0);
         private $STATS;
 
         /**
@@ -47,7 +45,6 @@
             }
             $this->location = $settings['location'];
             $this->openStats();
-            ++$this->stats['connect'];
         }
 
         public function __destruct()
@@ -119,7 +116,7 @@
                 $ignore = array('.', '..');
                 while (false !== ($file = readdir($DIR))) {
                     if (!in_array($file, $ignore)) {
-                        unlink($this->location.DIRECTORY_SEPARATOR.$file);
+                        unlink($this->location . DIRECTORY_SEPARATOR . $file);
                     }
                 }
                 closedir($DIR);
@@ -151,13 +148,13 @@
                         $item = unserialize($item);
                     }
                     if (!$item->hasExpired()) {
+                        $this->incrementStats('r');
                         return $item->getContent();
                     } else {
                         $this->delete($item);
                     }
-                    ++$this->stats['success'];
                 } else {
-                    ++$this->stats['failure'];
+                    $this->incrementStats('f');
                 }
             }
             return false;
@@ -233,7 +230,7 @@
                     fwrite($FILE, serialize($_node));
                 }
                 fclose($FILE);
-                ++$this->stats['set'];
+                $this->incrementStats('w');
                 return $value;
             }
         }
@@ -246,7 +243,7 @@
          */
         private function file($node)
         {
-            return $this->location.md5($node).'.cache';
+            return $this->location . md5($node) . '.cache';
         }
 
         /**
@@ -257,7 +254,7 @@
             $size = 0;
             $DIR = opendir($this->location);
             if ($DIR) {
-                $ignore = array('.', '..', '__phy_stats');
+                $ignore = array('.', '..', '__phy_stats_log');
                 while (false !== ($file = readdir($DIR))) {
                     if (!in_array($file, $ignore)) {
                         $size += filesize($file);
@@ -265,11 +262,30 @@
                 }
                 closedir($DIR);
             }
+            rewind($this->STATS);
+            $stats = array(
+                'c' => 0,
+                'w' => 0,
+                'r' => 0,
+                'f' => 0
+            );
+            $commands = 0;
+            while (($line = fgets($this->STATS)) !== false) {
+                $line = trim($line);
+                if (!isset($stats[$line])) {
+                    continue;
+                }
+                ++$stats[$line];
+                ++$commands;
+            }
             return array(
-                'connections' => $this->stats['connect'], 'size' => $size, 'sets' => $this->stats['set'],
-                'hits' => $this->stats['success'], 'failures' => $this->stats['failure'],
-                'hit_rate' => $this->stats['set']
-                    ? sprintf('%d2', (($this->stats['success'] / $this->stats['set']) * 100))
+                'connections' => $stats['c'],
+                'size' => $size,
+                'sets' => $stats['w'],
+                'hits' => $stats['r'],
+                'failures' => $stats['f'],
+                'hit_rate' => $stats['r'] + $stats['f']
+                    ? $stats['r'] / ($stats['r'] + $stats['f'])
                     : 0
             );
         }
@@ -281,12 +297,9 @@
          */
         private function openStats()
         {
-            $file = $this->location.DIRECTORY_SEPARATOR.'__phy_stats';
-            $this->STATS = fopen($file, 'w+');
-            $stats = fread($this->STATS, filesize($file));
-            if ($stats) {
-                $this->stats = unserialize($stats);
-            }
+            $file = $this->location . DIRECTORY_SEPARATOR . '__phy_stats_log';
+            $this->STATS = fopen($file, 'a+');
+            $this->incrementStats('c');
             flock($this->STATS, LOCK_EX);
         }
 
@@ -297,9 +310,18 @@
          */
         private function closeStats()
         {
-            fwrite($this->STATS, serialize($this->stats));
-            flock($this->STATS, LOCK_UN);
             fclose($this->STATS);
+        }
+
+        /**
+         * Append out write to the log.
+         *
+         * @param $stat
+         * @ignore
+         */
+        private function incrementStats($stat)
+        {
+            fwrite($this->STATS, $stat . PHP_EOL);
         }
 
         /**
