@@ -27,7 +27,6 @@
     {
 
         private $location = '';
-        private $STATS;
 
         /**
          * $settings['location'] will define where to store the cache files.
@@ -44,12 +43,6 @@
                 throw new Exception('Disk Caching is disabled, cache folder is not writable.');
             }
             $this->location = $settings['location'];
-            $this->openStats();
-        }
-
-        public function __destruct()
-        {
-            $this->closeStats();
         }
 
         /**
@@ -138,7 +131,7 @@
                 return $return;
             } else {
                 $file = $this->file($node);
-                if (is_readable($file)) {
+                if (is_readable($file) && filesize($file)) {
                     $FILE = fopen($file, 'r+');
                     $item = fread($FILE, filesize($file));
                     fclose($FILE);
@@ -147,16 +140,13 @@
                     } else {
                         $item = unserialize($item);
                     }
-                    if (!$item->hasExpired()) {
+                    if (is_object($item) && !$item->hasExpired()) {
                         $this->incrementStats('r');
                         return $item->getContent();
-                    } else {
-                        $this->delete($item);
                     }
-                } else {
-                    $this->incrementStats('f');
                 }
             }
+            $this->incrementStats('f');
             return false;
         }
 
@@ -224,7 +214,7 @@
                 }
                 $_node = new Node($node, $value, $expiration);
                 $FILE = fopen($file, 'w+');
-                if (MEMCACHE_COMPRESSED === $flag) {
+                if (defined('MEMCACHE_COMPRESSED') && MEMCACHE_COMPRESSED === $flag) {
                     fwrite($FILE, gzcompress(serialize($_node), -1));
                 } else {
                     fwrite($FILE, serialize($_node));
@@ -262,7 +252,8 @@
                 }
                 closedir($DIR);
             }
-            rewind($this->STATS);
+            $file = $this->location . DIRECTORY_SEPARATOR . '__phy_stats_log';
+            $STATS = fopen($file, 'a+');
             $stats = array(
                 'c' => 0,
                 'w' => 0,
@@ -270,7 +261,7 @@
                 'f' => 0
             );
             $commands = 0;
-            while (($line = fgets($this->STATS)) !== false) {
+            while (($line = fgets($STATS)) !== false) {
                 $line = trim($line);
                 if (!isset($stats[$line])) {
                     continue;
@@ -278,6 +269,7 @@
                 ++$stats[$line];
                 ++$commands;
             }
+            fclose($STATS);
             return array(
                 'connections' => $stats['c'],
                 'size' => $size,
@@ -297,10 +289,7 @@
          */
         private function openStats()
         {
-            $file = $this->location . DIRECTORY_SEPARATOR . '__phy_stats_log';
-            $this->STATS = fopen($file, 'a+');
             $this->incrementStats('c');
-            flock($this->STATS, LOCK_EX);
         }
 
         /**
@@ -310,7 +299,6 @@
          */
         private function closeStats()
         {
-            fclose($this->STATS);
         }
 
         /**
@@ -321,7 +309,10 @@
          */
         private function incrementStats($stat)
         {
-            fwrite($this->STATS, $stat . PHP_EOL);
+            $file = $this->location . DIRECTORY_SEPARATOR . '__phy_stats_log';
+            $STATS = fopen($file, 'a+');
+            fwrite($STATS, $stat . PHP_EOL);
+            fclose($STATS);
         }
 
         /**
