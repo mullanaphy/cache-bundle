@@ -18,7 +18,6 @@
     use Symfony\Component\Console\Input\InputArgument;
     use Symfony\Component\Console\Input\InputInterface;
     use Symfony\Component\Console\Output\OutputInterface;
-    use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
     /**
      * This will allow us to delete a cache key via:
@@ -30,16 +29,18 @@
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class CacheDeleteCommand extends ContainerAwareCommand
+    class CacheDeleteCommand extends CacheCommandAbstract
     {
 
         /**
-         * Configure this CLI command.
+         * {@inheritDoc}
          */
         protected function configure()
         {
-            $this->setName('phy:cache:delete')->setDescription('Delete a cache key.')
+            $this->setName('phy:cache:delete')
+                ->setDescription('Delete a cache key.')
                 ->addOption('key', null, InputOption::VALUE_REQUIRED, 'Where to store the key.');
+            parent::configure();
         }
 
         /**
@@ -53,9 +54,10 @@
             /**
              * @var \PHY\CacheBundle\Cache $cache
              */
-            $cache = $this->getContainer()->get('phy_cache');
+            $cache = $this->getCache($input, $output);
+
             $key = $input->getOption('key');
-            $output->writeln('Deleting '.$key.' on '.$cache->getName().' cache.');
+            $output->writeln('Deleting ' . $key . ' on ' . $cache->getName() . ' cache.');
             if ($cache->delete($key)) {
                 $output->writeln('<info>Deleted!</info>');
             } else {

@@ -18,7 +18,6 @@
     use Symfony\Component\Console\Input\InputArgument;
     use Symfony\Component\Console\Input\InputInterface;
     use Symfony\Component\Console\Output\OutputInterface;
-    use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
     /**
      * This will allow us to flush the cache via:
@@ -30,15 +29,16 @@
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class CacheFlushCommand extends ContainerAwareCommand
+    class CacheFlushCommand extends CacheCommandAbstract
     {
 
         /**
-         * Configure this CLI command.
+         * {@inheritDoc}
          */
         protected function configure()
         {
             $this->setName('phy:cache:flush')->setDescription('Flush our entire cache.');
+            parent::configure();
         }
 
         /**
@@ -52,8 +52,9 @@
             /**
              * @var \PHY\CacheBundle\Cache $cache
              */
-            $cache = $this->getContainer()->get('phy_cache');
-            $output->writeln('Flushing '.$cache->getName().' cache.');
+            $cache = $this->getCache($input, $output);
+
+            $output->writeln('Flushing ' . $cache->getName() . ' cache.');
             if ($cache->flush()) {
                 $output->writeln('<info>Successfully flushed the cache!</info>');
             } else {

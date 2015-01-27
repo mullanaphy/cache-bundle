@@ -38,6 +38,11 @@
         public function setUp()
         {
             $directory = '.' . DIRECTORY_SEPARATOR . 'tmp';
+            if (!is_dir($directory)) {
+                if (!mkdir($directory)) {
+                    return;
+                }
+            }
             if (is_writable($directory)) {
                 $this->directory = $directory;
                 $this->cleanUp();

@@ -39,14 +39,11 @@
             if (!array_key_exists('location', $settings)) {
                 throw new Exception('No folder set for Disk Caching.');
             }
-            $location = $settings['location'];
-            if (!in_array(substr($settings['location'], -1), array('/', '\\'))) {
-                $location .= DIRECTORY_SEPARATOR;
-            }
-            if (!is_writable($location)) {
+            if (!is_writable($settings['location'])) {
                 throw new Exception('Disk Caching is disabled, cache folder is not writable.');
             }
-            $this->location = $location;
+            $this->location = $settings['location'];
+            $this->incrementStats('c');
         }
 
         /**
@@ -232,7 +229,7 @@
          */
         private function file($node)
         {
-            return $this->location . md5($node) . '.cache';
+            return $this->location . DIRECTORY_SEPARATOR . md5($node) . '.cache';
         }
 
         /**
@@ -246,7 +243,7 @@
                 $ignore = array('.', '..', '__phy_stats_log');
                 while (false !== ($file = readdir($DIR))) {
                     if (!in_array($file, $ignore)) {
-                        $size += filesize($file);
+                        $size += filesize($this->location . DIRECTORY_SEPARATOR . $file);
                     }
                 }
                 closedir($DIR);
@@ -257,7 +254,7 @@
                 'c' => 0,
                 'w' => 0,
                 'r' => 0,
-                'f' => 0
+                'f' => 0,
             );
             $commands = 0;
             while (($line = fgets($STATS)) !== false) {
@@ -279,25 +276,6 @@
                     ? $stats['r'] / ($stats['r'] + $stats['f'])
                     : 0
             );
-        }
-
-        /**
-         * Open our stats. This isn't ideal, since
-         *
-         * @ignore
-         */
-        private function openStats()
-        {
-            $this->incrementStats('c');
-        }
-
-        /**
-         * Store and close out stats.
-         *
-         * @ignore
-         */
-        private function closeStats()
-        {
         }
 
         /**

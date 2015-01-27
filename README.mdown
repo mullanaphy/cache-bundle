@@ -11,7 +11,7 @@ To include this along with your Symfony2 project then you can just include this 
 
 ```
 "require": {
-    "phy/cache-bundle": "dev-master"
+    "phy/cache-bundle": "1.0.0"
 }
 ```
 
@@ -111,7 +111,23 @@ All methods available are almost 100% equal to [\Memcache](php.net/manual/en/cla
 Command Line
 ------------
 
-There are two command line options.
+There are several command line options to handle simple cache methods. All commands have an ability to overwrite the
+cache used with the --config option. If --config isn't set it will use the generic phy_cache otherwise you can pass
+along a config in a JSON string in this format:
+
+```json
+{
+  "type": "disk",
+  "client": {
+    "location": "./tmp"
+  },
+  "options": {
+    "prefix": "phy_",
+    "expiration": 300,
+    "compression": 0
+  }
+}
+```
 
 Check current running stats (Needs some style and extra functionality)
 ```
@@ -126,6 +142,11 @@ php app/console phy:cache:flush
 Set something
 ```
 php app/console phy:cache:set --key something --value 3 --compress 0 --expires 40
+```
+
+Replace something
+```
+php app/console phy:cache:replace --key something --value 3 --compress 0 --expires 40
 ```
 
 Get something

@@ -18,7 +18,6 @@
     use Symfony\Component\Console\Input\InputArgument;
     use Symfony\Component\Console\Input\InputInterface;
     use Symfony\Component\Console\Output\OutputInterface;
-    use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
     use PHY\CacheBundle\Helper\CacheHelper;
 
     /**
@@ -30,16 +29,17 @@
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class CacheStatsCommand extends ContainerAwareCommand
+    class CacheStatsCommand extends CacheCommandAbstract
     {
 
         /**
-         * Configure this CLI command.
+         * {@inheritDoc}
          */
         protected function configure()
         {
             $this->setName('phy:cache:stats')
                 ->setDescription('See whatever stats we can about our currently running cache.');
+            parent::configure();
         }
 
         /**
@@ -53,7 +53,8 @@
             /**
              * @var \PHY\CacheBundle\Cache $cache
              */
-            $cache = $this->getContainer()->get('phy_cache');
+            $cache = $this->getCache($input, $output);
+
             $helper = new CacheHelper;
             $stats = $helper->prettyJson($cache->getStats());
             $output->writeln($stats);
