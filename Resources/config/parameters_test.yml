@@ -1,0 +1,6 @@
+parameters:
+    phy_cache.class: PHY\CacheBundle\Cache\Local
+    phy_cache.settings: []
+    phy_cache.prefix: phy_
+    phy_cache.expiration: 300
+    phy_cache.compression: 0

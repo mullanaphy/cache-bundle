@@ -157,6 +157,16 @@ Requirements
 
 - PHP 5.3+
 
+Testing
+-------
+
+Tests will try and use all the different cache clients and if they aren't installed, or cannot connect to the desired
+cache file then those tests will be skipped. To test Disk caching, there needs to be a tmp directory that is writable
+which will be cleaner before and after a test run. To run all you need to do in the command line is:
+```
+phpunit
+```
+
 Submitting bugs and feature requests
 ------------------------------------
 
@@ -179,8 +189,3 @@ Acknowledgements
 ----------------
 
 - [Kevin Boyd](https://github.com/beryllium)
-
-TODO
-----
-
-- Tests, Tests, TESTS!

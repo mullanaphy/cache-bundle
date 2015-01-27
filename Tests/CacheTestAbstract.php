@@ -12,41 +12,32 @@
      * to john@jo.mu so I can send you a copy immediately.
      */
 
-    namespace PHY\CacheBundle\Tests\Cache;
-
-    use PHY\CacheBundle\Cache\None;
-    use PHY\CacheBundle\Tests\CacheTestAbstract;
+    namespace PHY\CacheBundle\Tests;
 
     /**
-     * Test our None class.
+     * All of our cache files should be identical so let them all extend this.
      *
-     * @package PHY\CacheBundle\Tests\Cache\NoneTest
+     * @package PHY\CacheBundle\Tests\CacheTest
      * @category PHY\CacheBundle
      * @copyright Copyright (c) 2013 John Mullanaphy (http://jo.mu/)
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class NoneTest extends CacheTestAbstract
+    abstract class CacheTestAbstract extends \PHPUnit_Framework_TestCase
     {
 
         /**
-         * Return a None class.
+         * For most of our tests we only need a cache object. It doesn't matter which cache
+         * we use to test all of our service calls, so we'll just use Local.
          *
-         * @return None
+         * @return \PHY\CacheBundle\Cache\CacheInterface
          */
-        public function getCache()
-        {
-            return new None;
-        }
+        abstract public function getCache();
 
         /**
-         * Test our name is correct.
+         * Test that the service is loaded.
          */
-        public function testServiceOrName()
-        {
-            $cache = $this->getCache();
-            $this->assertEquals('None', $cache->getName());
-        }
+        abstract public function testServiceOrName();
 
         /**
          * Test our basic set/get.
@@ -55,7 +46,7 @@
         {
             $cache = $this->getCache();
             $cache->set('a', 123);
-            $this->assertFalse($cache->get('a'));
+            $this->assertEquals(123, $cache->get('a'));
         }
 
         /**
@@ -68,8 +59,8 @@
                 'b' => 123,
                 'c' => 1234
             ));
-            $this->assertFalse($cache->get('b'));
-            $this->assertFalse($cache->get('c'));
+            $this->assertEquals(123, $cache->get('b'));
+            $this->assertEquals(1234, $cache->get('c'));
         }
 
         /**
@@ -92,8 +83,8 @@
                 'e' => 1234
             ));
             $this->assertEquals(array(
-                'd' => false,
-                'e' => false
+                'd' => 123,
+                'e' => 1234
             ), $cache->get(array('d', 'e')));
         }
 
@@ -105,7 +96,7 @@
             $cache = $this->getCache();
             $cache->set('f', 123);
             $cache->replace('f', 1234);
-            $this->assertFalse($cache->get('f'));
+            $this->assertEquals(1234, $cache->get('f'));
         }
 
         /**
@@ -121,8 +112,8 @@
                 'i' => 12345
             ));
             $this->assertEquals(array(
-                'h' => false,
-                'i' => false
+                'h' => 1234,
+                'i' => 12345
             ), $cache->get(array('h', 'i')));
         }
 
@@ -134,7 +125,7 @@
             $cache = $this->getCache();
             $cache->set('j', 3);
             $cache->decrement('j');
-            $this->assertFalse($cache->get('j'));
+            $this->assertEquals(2, $cache->get('j'));
         }
 
         /**
@@ -145,7 +136,7 @@
             $cache = $this->getCache();
             $cache->set('k', 3);
             $cache->decrement('k', 2);
-            $this->assertFalse($cache->get('k'));
+            $this->assertEquals(1, $cache->get('k'));
         }
 
         /**
@@ -158,8 +149,9 @@
             $cache->set('m', 2);
             $cache->decrement(array('l', 'm'));
             $this->assertEquals(array(
-                'l' => false,
-                'm' => false
+                'l' => 2,
+                'm' => 1
             ), $cache->get(array('l', 'm')));
         }
+
     }

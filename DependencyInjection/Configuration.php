@@ -36,7 +36,7 @@
             $treeBuilder = new TreeBuilder;
             $root = $treeBuilder->root('phy_cache');
 
-            $root->children()->scalarNode('class')->end();
+            $root->children()->scalarNode('class')->end()->end();
 
             return $treeBuilder;
         }

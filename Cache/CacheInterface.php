@@ -83,7 +83,7 @@
          * @param int $expiration
          * @return bool
          */
-        public function replace($node, $value, $expiration = 0, $flag = 0);
+        public function replace($node, $value = null, $expiration = 0, $flag = 0);
 
         /**
          * Store a new key into the memory table.
@@ -94,7 +94,7 @@
          * @param int $expiration
          * @return bool
          */
-        public function set($node, $value, $expiration = 0, $flag = 0);
+        public function set($node, $value = null, $expiration = 0, $flag = 0);
 
         /**
          * Grab any stats we can pertaining to our caching.

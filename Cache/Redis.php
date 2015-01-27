@@ -49,7 +49,9 @@
             $this->instance = new \Redis;
             $persist = array_key_exists('persist', $settings) && $settings['persist'];
             $parameters = array(
-                $settings['server'],
+                array_key_exists('server', $settings)
+                    ? $settings['server']
+                    : 'localhost',
                 array_key_exists('port', $settings)
                     ? $settings['port']
                     : null,
@@ -122,7 +124,7 @@
                     }
                     return $rows;
                 } else {
-                    return $this->instance->mGet($node);
+                    return array_combine($node, $this->instance->mGet($node));
                 }
             } else {
                 if (defined('MEMCACHE_COMPRESSED') && MEMCACHE_COMPRESSED === $flag) {
@@ -154,7 +156,7 @@
         /**
          * {@inheritDoc}
          */
-        public function replace($node, $value, $expiration = 0, $flag = 0)
+        public function replace($node, $value = null, $expiration = 0, $flag = 0)
         {
             return $this->set($node, $value, $expiration, $flag);
         }
@@ -162,7 +164,7 @@
         /**
          * {@inheritDoc}
          */
-        public function set($node, $value, $expiration = 0, $flag = 0)
+        public function set($node, $value = null, $expiration = 0, $flag = 0)
         {
             if (is_array($node)) {
                 $return = array();

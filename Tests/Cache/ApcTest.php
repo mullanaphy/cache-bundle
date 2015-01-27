@@ -14,29 +14,37 @@
 
     namespace PHY\CacheBundle\Tests\Cache;
 
-    use PHY\CacheBundle\Cache\Local;
+    use PHY\CacheBundle\Cache\Exception;
+    use PHY\CacheBundle\Cache\Apc;
+    use PHY\CacheBundle\Cache\None;
     use PHY\CacheBundle\Tests\CacheTestAbstract;
 
     /**
-     * Test our local cache. (In memory).
+     * Test our APC class.
      *
-     * @package PHY\CacheBundle\Tests\Cache\LocalTest
+     * @package PHY\CacheBundle\Tests\Cache\ApcTest
      * @category PHY\CacheBundle
      * @copyright Copyright (c) 2013 John Mullanaphy (http://jo.mu/)
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class LocalTest extends CacheTestAbstract
+    class ApcTest extends CacheTestAbstract
     {
 
         /**
-         * Return a local test.
+         * Return a Memcached class.
          *
-         * @return Local
+         * @return Memcache
          */
         public function getCache()
         {
-            return new Local;
+            try {
+                $cache = new Apc(array('mode' => 'user'));
+            } catch (Exception $exception) {
+                $this->markTestSkipped($exception->getMessage());
+                $cache = new None;
+            }
+            return $cache;
         }
 
         /**
@@ -44,6 +52,7 @@
          */
         public function testServiceOrName()
         {
-            $this->assertEquals('Local', $this->getCache()->getName());
+            $cache = $this->getCache();
+            $this->assertEquals('APC', $cache->getName());
         }
     }

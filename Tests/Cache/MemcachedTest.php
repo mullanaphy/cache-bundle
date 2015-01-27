@@ -15,6 +15,8 @@
     namespace PHY\CacheBundle\Tests\Cache;
 
     use PHY\CacheBundle\Cache\Memcached;
+    use PHY\CacheBundle\Cache\None;
+    use PHY\CacheBundle\Tests\CacheTestAbstract;
 
     /**
      * Test our Memcached class.
@@ -25,7 +27,7 @@
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class MemcachedTest extends \PHPUnit_Framework_TestCase
+    class MemcachedTest extends CacheTestAbstract
     {
 
         /**
@@ -35,17 +37,22 @@
          */
         public function getCache()
         {
-            return new Memcached;
+            if (!class_exists('\Memcached')) {
+                $this->markTestSkipped('Memcached not installed.');
+                return new None;
+            }
+            return new Memcached(array(
+                'id' => 'phy_testing',
+                'server' => 'localhost:11211'
+            ));
         }
 
         /**
          * Test our name is correct.
          */
-        public function testName()
+        public function testServiceOrName()
         {
-            if (!class_exists('\Memcached')) {
-                $this->markTestSkipped('Memcached not installed.');
-            }
-            $this->assertEquals('Memcached', $this->getCache()->getName());
+            $cache = $this->getCache();
+            $this->assertEquals('Memcached', $cache->getName());
         }
     }

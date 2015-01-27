@@ -42,6 +42,13 @@
          */
         public function decrement($node, $decrement = 1)
         {
+            if (is_array($node)) {
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = false;
+                }
+                return $rows;
+            }
             return false;
         }
 
@@ -66,6 +73,13 @@
          */
         public function get($node, $flag = 0)
         {
+            if (is_array($node)) {
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = false;
+                }
+                return $rows;
+            }
             return false;
         }
 
@@ -74,22 +88,36 @@
          */
         public function increment($node, $increment = 1)
         {
+            if (is_array($node)) {
+                $rows = array();
+                foreach ($node as $key) {
+                    $rows[$key] = false;
+                }
+                return $rows;
+            }
             return false;
         }
 
         /**
          * {@inheritDoc}
          */
-        public function replace($node, $value, $expiration = 0, $flag = 0)
+        public function replace($node, $value = null, $expiration = 0, $flag = 0)
         {
-            return false;
+            return $this->set($node, $value, $expiration, $flag);
         }
 
         /**
          * {@inheritDoc}
          */
-        public function set($node, $value, $expiration = 0, $flag = 0)
+        public function set($node, $value = null, $expiration = 0, $flag = 0)
         {
+            if (is_array($node)) {
+                $rows = array();
+                foreach ($node as $key => $value) {
+                    $rows[$key] = false;
+                }
+                return $rows;
+            }
             return false;
         }
 

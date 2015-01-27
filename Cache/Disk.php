@@ -39,10 +39,14 @@
             if (!array_key_exists('location', $settings)) {
                 throw new Exception('No folder set for Disk Caching.');
             }
-            if (!is_writable($settings['location'])) {
+            $location = $settings['location'];
+            if (!in_array(substr($settings['location'], -1), array('/', '\\'))) {
+                $location .= DIRECTORY_SEPARATOR;
+            }
+            if (!is_writable($location)) {
                 throw new Exception('Disk Caching is disabled, cache folder is not writable.');
             }
-            $this->location = $settings['location'];
+            $this->location = $location;
         }
 
         /**
@@ -124,7 +128,7 @@
             if (is_array($node)) {
                 $return = array();
                 foreach ($node as $key) {
-                    $return[] = $this->get($key, $flag);
+                    $return[$key] = $this->get($key, $flag);
                 }
                 return $return;
             } else {
@@ -174,7 +178,7 @@
         /**
          * {@inheritDoc}
          */
-        public function replace($node, $value, $expiration = 0, $flag = 0)
+        public function replace($node, $value = null, $expiration = 0, $flag = 0)
         {
             if (is_array($node)) {
                 $rows = array();
@@ -194,7 +198,7 @@
         /**
          * {@inheritDoc}
          */
-        public function set($node, $value, $expiration = 0, $flag = 0)
+        public function set($node, $value = null, $expiration = 0, $flag = 0)
         {
             if (is_array($node)) {
                 $rows = array();

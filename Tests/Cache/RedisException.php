@@ -14,36 +14,16 @@
 
     namespace PHY\CacheBundle\Tests\Cache;
 
-    use PHY\CacheBundle\Cache\Local;
-    use PHY\CacheBundle\Tests\CacheTestAbstract;
-
     /**
-     * Test our local cache. (In memory).
+     * Exception for our Redis test.
      *
-     * @package PHY\CacheBundle\Tests\Cache\LocalTest
+     * @package PHY\CacheBundle\Tests\Cache\RedisTestException
      * @category PHY\CacheBundle
      * @copyright Copyright (c) 2013 John Mullanaphy (http://jo.mu/)
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class LocalTest extends CacheTestAbstract
+    class RedisTestException extends \Exception
     {
 
-        /**
-         * Return a local test.
-         *
-         * @return Local
-         */
-        public function getCache()
-        {
-            return new Local;
-        }
-
-        /**
-         * Test our name is correct.
-         */
-        public function testServiceOrName()
-        {
-            $this->assertEquals('Local', $this->getCache()->getName());
-        }
     }

@@ -14,7 +14,9 @@
 
     namespace PHY\CacheBundle\Tests\Cache;
 
+    use PHY\CacheBundle\Cache\None;
     use PHY\CacheBundle\Cache\Redis;
+    use PHY\CacheBundle\Tests\CacheTestAbstract;
 
     /**
      * Test our Redis class.
@@ -25,27 +27,122 @@
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class RedisTest extends \PHPUnit_Framework_TestCase
+    class RedisTest extends CacheTestAbstract
     {
+
+        private $redisException = 'Could not connect to Redis at localhost:6379';
 
         /**
          * Return a Redis class.
          *
          * @return Redis
+         * @throws \Exception
          */
         public function getCache()
         {
-            return new Redis;
+            if (!class_exists('\Redis')) {
+                throw new RedisTestException('Redis not installed.');
+            }
+            $cache = new Redis;
+            return $cache;
         }
 
         /**
-         * Test our name is correct.
+         * {@inheritDoc}
          */
-        public function testName()
+        public function testServiceOrName()
         {
-            if (!class_exists('\Redis')) {
-                $this->markTestSkipped('Redis not installed.');
+            try {
+                $cache = $this->getCache();
+                $this->assertEquals('Redis', $cache->getName());
+            } catch (\Exception $exception) {
+                $this->markTestSkipped($exception->getMessage());
             }
-            $this->assertEquals('Redis', $this->getCache()->getName());
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function testSetAndGet()
+        {
+            $this->_test(__FUNCTION__);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function testSetMultiAndGet()
+        {
+            $this->_test(__FUNCTION__);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function testGetDoesntExists()
+        {
+            $this->_test(__FUNCTION__);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function testGetMulti()
+        {
+            $this->_test(__FUNCTION__);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function testReplace()
+        {
+            $this->_test(__FUNCTION__);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function testReplaceMulti()
+        {
+            $this->_test(__FUNCTION__);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function testDecrement()
+        {
+            $this->_test(__FUNCTION__);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function testDecrementMulti()
+        {
+            $this->_test(__FUNCTION__);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function testDecrementByNumber()
+        {
+            $this->_test(__FUNCTION__);
+        }
+
+        /**
+         * All of our tests are the default ones, just wrapped with a try for instances of no Redis connection.
+         */
+        private function _test($func)
+        {
+            try {
+                parent::$func();
+            } catch (\RedisException $exception) {
+                $this->markTestSkipped($this->redisException);
+            } catch (RedisTestException $exception) {
+                $this->markTestSkipped($exception->getMessage());
+            }
         }
     }

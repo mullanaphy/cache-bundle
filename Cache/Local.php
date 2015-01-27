@@ -157,7 +157,7 @@
         /**
          * {@inheritDoc}
          */
-        public function replace($node, $value, $expiration = 0, $flag = 0)
+        public function replace($node, $value = null, $expiration = 0, $flag = 0)
         {
             if (is_array($node)) {
                 $rows = array();
@@ -179,7 +179,7 @@
         /**
          * {@inheritDoc}
          */
-        public function set($node, $value, $expiration = 0, $flag = 0)
+        public function set($node, $value = null, $expiration = 0, $flag = 0)
         {
             if (is_array($node)) {
                 $rows = array();

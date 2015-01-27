@@ -15,6 +15,8 @@
     namespace PHY\CacheBundle\Tests\Cache;
 
     use PHY\CacheBundle\Cache\Disk;
+    use PHY\CacheBundle\Cache\None;
+    use PHY\CacheBundle\Tests\CacheTestAbstract;
 
     /**
      * Test our Disk class.
@@ -25,7 +27,7 @@
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class DiskTest extends \PHPUnit_Framework_TestCase
+    class DiskTest extends CacheTestAbstract
     {
 
         private $directory = false;
@@ -72,17 +74,20 @@
          */
         public function getCache()
         {
+            if (!$this->directory) {
+                $this->markTestSkipped('Temporary test folder is not writable.');
+                return new None;
+            }
             return new Disk(array('location' => $this->directory));
         }
 
         /**
          * Test our name is correct.
          */
-        public function testName()
+        public function testServiceOrName()
         {
-            if (!$this->directory) {
-                $this->markTestSkipped('Temporary test folder is not writable.');
-            }
-            $this->assertEquals('Disk', $this->getCache()->getName());
+            $cache = $this->getCache();
+            $this->assertEquals('Disk', $cache->getName());
         }
+
     }
