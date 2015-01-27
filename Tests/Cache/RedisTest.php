@@ -14,28 +14,28 @@
 
     namespace PHY\CacheBundle\Tests\Cache;
 
-    use PHY\CacheBundle\Cache\Local;
+    use PHY\CacheBundle\Cache\Redis;
 
     /**
-     * Test our local cache. (In memory).
+     * Test our Redis class.
      *
-     * @package PHY\CacheBundle\Tests\Cache\LocalTest
+     * @package PHY\CacheBundle\Tests\Cache\RedisTest
      * @category PHY\CacheBundle
      * @copyright Copyright (c) 2013 John Mullanaphy (http://jo.mu/)
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class LocalTest extends \PHPUnit_Framework_TestCase
+    class RedisTest extends \PHPUnit_Framework_TestCase
     {
 
         /**
-         * Return a local test.
+         * Return a Redis class.
          *
-         * @return Local
+         * @return Redis
          */
         public function getCache()
         {
-            return new Local;
+            return new Redis;
         }
 
         /**
@@ -43,6 +43,9 @@
          */
         public function testName()
         {
-            $this->assertEquals('Local', $this->getCache()->getName());
+            if (!class_exists('\Redis')) {
+                $this->markTestSkipped('Redis not installed.');
+            }
+            $this->assertEquals('Redis', $this->getCache()->getName());
         }
     }

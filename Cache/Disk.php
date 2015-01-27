@@ -54,7 +54,7 @@
                 $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = $func($key, $decrement);
+                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $decrement));
                 }
                 return $rows;
             } else {
@@ -78,7 +78,7 @@
                 $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = $func($key, $timeout);
+                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $timeout));
                 }
                 return $rows;
             } else {
@@ -159,7 +159,7 @@
                 $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = $func($key, $increment);
+                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $increment));
                 }
                 return $rows;
             } else {
@@ -183,7 +183,7 @@
                 $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key => $v) {
-                    $rows[$key] = $func($key, $v, $value, $expiration);
+                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $v, $value, $expiration));
                 }
                 return $rows;
             } else {
@@ -204,7 +204,7 @@
                 $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key => $v) {
-                    $rows[$key] = $func($key, $v, $value, $expiration);
+                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $v, $value, $expiration));
                 }
                 return $rows;
             } else {
@@ -323,5 +323,12 @@
             return 'Disk';
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        public function getInstance()
+        {
+            return null;
+        }
     }
 

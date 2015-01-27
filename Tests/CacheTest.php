@@ -14,9 +14,13 @@
 
     namespace PHY\CacheBundle\Tests;
 
-    use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+    use PHY\CacheBundle\DependencyInjection\PHYCacheExtension;
     use PHY\CacheBundle\Cache;
     use PHY\CacheBundle\Cache\Local;
+    use Symfony\Component\DependencyInjection\ContainerBuilder;
+    use Symfony\Component\DependencyInjection\Definition;
+    use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+    use Symfony\Component\DependencyInjection\Compiler\ResolveDefinitionTemplatesPass;
 
     /**
      * Test the main cache service.
@@ -27,20 +31,8 @@
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class CacheTest extends WebTestCase
+    class CacheTest extends \PHPUnit_Framework_TestCase
     {
-
-        private $container;
-
-        /**
-         * Boot up our kernel and grab the container.
-         */
-        public function setUp()
-        {
-            $kernel = static::createKernel();
-            $kernel->boot();
-            $this->container = $kernel->getContainer();
-        }
 
         /**
          * For most of our tests we only need a cache object. It doesn't matter which cache
@@ -58,7 +50,7 @@
          */
         public function testService()
         {
-            $this->assertInstanceOf('PHY\CacheBundle\Cache', $this->container->get('phy_cache'));
+            $this->assertInstanceOf('PHY\CacheBundle\Cache', self::createContainer()->get('phy_cache'));
         }
 
         /**
@@ -67,8 +59,8 @@
         public function testSetAndGet()
         {
             $cache = $this->getCache();
-            $cache->set('key1', 123);
-            $this->assertEquals(123, $cache->get('key1'));
+            $cache->set('a', 123);
+            $this->assertEquals(123, $cache->get('a'));
         }
 
         /**
@@ -78,11 +70,11 @@
         {
             $cache = $this->getCache();
             $cache->set(array(
-                'key1' => 123,
-                'key2' => 1234
+                'b' => 123,
+                'c' => 1234
             ));
-            $this->assertEquals(123, $cache->get('key1'));
-            $this->assertEquals(1234, $cache->get('key2'));
+            $this->assertEquals(123, $cache->get('b'));
+            $this->assertEquals(1234, $cache->get('c'));
         }
 
         /**
@@ -91,7 +83,7 @@
         public function testGetDoesntExists()
         {
             $cache = $this->getCache();
-            $this->assertIsNull($cache->get('false'));
+            $this->assertFalse($cache->get('false'));
         }
 
         /**
@@ -101,13 +93,13 @@
         {
             $cache = $this->getCache();
             $cache->set(array(
-                'key1' => 123,
-                'key2' => 1234
+                'd' => 123,
+                'e' => 1234
             ));
             $this->assertEquals(array(
-                'key1' => 123,
-                'key2' => 1234
-            ), $cache->get(array('key1', 'key2')));
+                'd' => 123,
+                'e' => 1234
+            ), $cache->get(array('d', 'e')));
         }
 
         /**
@@ -116,9 +108,9 @@
         public function testReplace()
         {
             $cache = $this->getCache();
-            $cache->set('key1', 123);
-            $cache->set('key1', 1234);
-            $this->assertEquals(1234, $cache->get('key1'));
+            $cache->set('f', 123);
+            $cache->replace('f', 1234);
+            $this->assertEquals(1234, $cache->get('f'));
         }
 
         /**
@@ -127,16 +119,16 @@
         public function testReplaceMulti()
         {
             $cache = $this->getCache();
-            $cache->set('key1', 123);
-            $cache->set('key2', 1234);
+            $cache->set('h', 123);
+            $cache->set('i', 1234);
             $cache->replace(array(
-                'key1' => 1234,
-                'key2' => 12345
+                'h' => 1234,
+                'i' => 12345
             ));
             $this->assertEquals(array(
-                'key1' => 1234,
-                'key2' => 12345
-            ), $cache->get(array('key1', 'key2')));
+                'h' => 1234,
+                'i' => 12345
+            ), $cache->get(array('h', 'i')));
         }
 
         /**
@@ -145,9 +137,9 @@
         public function testDecrement()
         {
             $cache = $this->getCache();
-            $cache->set('key1', 3);
-            $cache->decrement('key1');
-            $this->assertEquals(2, $cache->get('key1'));
+            $cache->set('j', 3);
+            $cache->decrement('j');
+            $this->assertEquals(2, $cache->get('j'));
         }
 
         /**
@@ -156,9 +148,9 @@
         public function testDecrementByNumber()
         {
             $cache = $this->getCache();
-            $cache->set('key1', 3);
-            $cache->decrement('key1', 2);
-            $this->assertEquals(1, $cache->get('key1'));
+            $cache->set('k', 3);
+            $cache->decrement('k', 2);
+            $this->assertEquals(1, $cache->get('k'));
         }
 
         /**
@@ -167,100 +159,30 @@
         public function testDecrementMulti()
         {
             $cache = $this->getCache();
-            $cache->set('key1', 3);
-            $cache->set('key2', 2);
-            $cache->decrement(array('key1', 'key2'));
+            $cache->set('l', 3);
+            $cache->set('m', 2);
+            $cache->decrement(array('l', 'm'));
             $this->assertEquals(array(
-                'key1' => 2,
-                'key2' => 1
-            ), $cache->get(array('key1', 'key2')));
+                'l' => 2,
+                'm' => 1
+            ), $cache->get(array('l', 'm')));
         }
 
-        /**
-         * Test an increment.
-         */
-        public function testIncrement()
+        public function createContainer()
         {
-            $cache = $this->getCache();
-            $cache->set('key1', 1);
-            $cache->increment('key1');
-            $this->assertEquals(2, $cache->get('key1'));
-        }
-
-        /**
-         * Test an increment by number.
-         */
-        public function testIncrementByNumber()
-        {
-            $cache = $this->getCache();
-            $cache->set('key1', 1);
-            $cache->increment('key1', 2);
-            $this->assertEquals(3, $cache->get('key1'));
-        }
-
-        /**
-         * Test a full flush.
-         */
-        public function testFlush()
-        {
-            $cache = $this->getCache();
-            $cache->set('key1', 1);
-            $cache->flush();
-            $this->assertIsNull($cache->get('key1'));
-        }
-
-        /**
-         * Test changing our prefix.
-         */
-        public function testPrefix()
-        {
-            $cache = $this->getCache();
-            $cache->setPrefix('prefix');
-            $this->assertEquals('prefix', $cache->getPrefix());
-        }
-
-        /**
-         * Test changing our default compression flag.
-         */
-        public function testSettingDefaultCompressionFlag()
-        {
-            $cache = $this->getCache();
-            $cache->setCompression(10);
-            $this->assertEquals(10, $cache->getCompression());
-        }
-
-        /**
-         * Test setting our default expiration. Notice, it's over 9000 because outdated memes are fun and so is being
-         * ironic about them.
-         */
-        public function testSettingDefaultExpiration()
-        {
-            $cache = $this->getCache();
-            $cache->setExpiration(9001);
-            $this->assertEquals(9001, $cache->getExpiration());
-        }
-
-        /**
-         * Test deleting a key.
-         */
-        public function testDelete()
-        {
-            $cache = $this->getCache();
-            $cache->set('key1', 123);
-            $cache->delete('key1');
-            $this->assertIsNull($cache->get('key1'));
-        }
-
-        /**
-         * Test deleting multiple keys.
-         */
-        public function testDeleteMulti()
-        {
-            $cache = $this->getCache();
-            $cache->set('key1', 123);
-            $cache->set('key2', 1234);
-            $cache->delete(array('key1', 'key2'));
-            $this->assertIsNull($cache->get('key1'));
-            $this->assertIsNull($cache->get('key2'));
+            $container = new ContainerBuilder(new ParameterBag(array(
+                'kernel.debug' => false,
+                'kernel.bundles' => array('YamlBundle' => 'Fixtures\Bundles\YamlBundle\YamlBundle'),
+                'kernel.cache_dir' => sys_get_temp_dir(),
+                'kernel.environment' => 'test',
+                'kernel.root_dir' => __DIR__ . '/../../../../', // src dir
+            )));
+            $extension = new PHYCacheExtension;
+            $container->registerExtension($extension);
+            $extension->load(array(), $container);
+            $container->getCompilerPassConfig()->setOptimizationPasses(array(new ResolveDefinitionTemplatesPass));
+            $container->getCompilerPassConfig()->setRemovingPasses(array());
+            $container->compile();
+            return $container;
         }
     }

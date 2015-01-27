@@ -108,4 +108,12 @@
         {
             return 'None';
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function getInstance()
+        {
+            return null;
+        }
     }

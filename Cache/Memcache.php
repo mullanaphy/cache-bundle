@@ -23,8 +23,13 @@
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class Memcache extends \Memcache implements CacheInterface
+    class Memcache implements CacheInterface
     {
+
+        /**
+         * @var \Memcache
+         */
+        private $instance;
 
         /**
          * $settings['server'] will try to connect to that server.
@@ -33,19 +38,20 @@
          */
         public function __construct(array $settings = array())
         {
+            $this->instance = new \Memcache;
             if (array_key_exists('server', $settings)) {
                 if (is_array($settings['server'])) {
                     $first = false;
                     foreach ($settings['server'] as $server) {
                         if (!$first) {
                             $first = true;
-                            call_user_func_array(array($this, 'connect'), array($server));
+                            call_user_func_array(array($this->instance, 'connect'), array($server));
                         } else {
-                            call_user_func_array(array($this, 'addServer'), array($server));
+                            call_user_func_array(array($this->instance, 'addServer'), array($server));
                         }
                     }
                 } else {
-                    $this->connect($settings['server']);
+                    $this->instance->connect($settings['server']);
                 }
             }
         }
@@ -57,10 +63,10 @@
         {
             if (is_array($node)) {
                 foreach ($node as $key) {
-                    parent::decrement($key, $decrement);
+                    $this->instance->decrement($key, $decrement);
                 }
             } else {
-                parent::decrement($node, $decrement);
+                $this->instance->decrement($node, $decrement);
             }
         }
 
@@ -71,10 +77,10 @@
         {
             if (is_array($node)) {
                 foreach ($node as $key) {
-                    parent::increment($key, $increment);
+                    $this->instance->increment($key, $increment);
                 }
             } else {
-                parent::increment($node, $increment);
+                $this->instance->increment($node, $increment);
             }
         }
 
@@ -86,11 +92,11 @@
             if (is_array($node)) {
                 $return = array();
                 foreach ($node as $key => $v) {
-                    $return[$key] = parent::set($key, $v, $value, $expiration);
+                    $return[$key] = $this->instance->set($key, $v, $value, $expiration);
                 }
                 return $return;
             } else {
-                return parent::set($node, $value, (int)$flag, $expiration);
+                return $this->instance->set($node, $value, (int)$flag, $expiration);
             }
         }
 
@@ -101,10 +107,10 @@
         {
             if (is_array($node)) {
                 foreach ($node as $key => $v) {
-                    parent::replace($key, $v, $value, $expiration);
+                    $this->instance->replace($key, $v, $value, $expiration);
                 }
             } else {
-                parent::replace($node, $value, (int)$flag, $expiration);
+                $this->instance->replace($node, $value, (int)$flag, $expiration);
             }
             return true;
         }
@@ -115,7 +121,7 @@
         public function get($node, $flag = 0)
         {
             $flag = (int)$flag;
-            return parent::get($node, $flag);
+            return $this->instance->get($node, $flag);
         }
 
         /**
@@ -125,10 +131,10 @@
         {
             if (is_array($node)) {
                 foreach ($node as $key) {
-                    parent::delete($key, $timeout);
+                    $this->instance->delete($key, $timeout);
                 }
             } else {
-                parent::delete($node, $timeout);
+                $this->instance->delete($node, $timeout);
             }
             return true;
         }
@@ -141,4 +147,27 @@
             return 'Memcache';
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        public function getInstance()
+        {
+            return $this->instance;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function flush()
+        {
+            $this->instance->flush();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function getStats()
+        {
+            return $this->instance->getStats();
+        }
     }

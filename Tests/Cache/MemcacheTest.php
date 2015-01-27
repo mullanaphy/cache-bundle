@@ -14,28 +14,28 @@
 
     namespace PHY\CacheBundle\Tests\Cache;
 
-    use PHY\CacheBundle\Cache\Local;
+    use PHY\CacheBundle\Cache\Memcache;
 
     /**
-     * Test our local cache. (In memory).
+     * Test our Memcache class.
      *
-     * @package PHY\CacheBundle\Tests\Cache\LocalTest
+     * @package PHY\CacheBundle\Tests\Cache\MemcacheTest
      * @category PHY\CacheBundle
      * @copyright Copyright (c) 2013 John Mullanaphy (http://jo.mu/)
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class LocalTest extends \PHPUnit_Framework_TestCase
+    class MemcacheTest extends \PHPUnit_Framework_TestCase
     {
 
         /**
-         * Return a local test.
+         * Return a Memcache class.
          *
-         * @return Local
+         * @return Memcache
          */
         public function getCache()
         {
-            return new Local;
+            return new Memcache;
         }
 
         /**
@@ -43,6 +43,9 @@
          */
         public function testName()
         {
-            $this->assertEquals('Local', $this->getCache()->getName());
+            if (!class_exists('\Memcache')) {
+                $this->markTestSkipped('Memcache not installed.');
+            }
+            $this->assertEquals('Memcache', $this->getCache()->getName());
         }
     }

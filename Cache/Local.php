@@ -45,21 +45,21 @@
         public function decrement($node, $decrement = 1)
         {
             if (is_array($node)) {
-                $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = $func($key, $decrement);
+                    $rows[$key] = $this->decrement($key, $decrement);
                 }
                 return $rows;
             } else {
                 $value = $this->get($node);
                 if ($value !== false) {
                     $value -= $decrement;
-                    return $this->replace($node, $value);
+                    $this->replace($node, $value);
                 } else {
                     $value = 0 - $decrement;
-                    return $this->set($node, $value);
+                    $this->set($node, $value);
                 }
+                return $value;
             }
         }
 
@@ -69,10 +69,9 @@
         public function delete($node, $timeout = 0)
         {
             if (is_array($node)) {
-                $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = $func($key, $timeout);
+                    $rows[$key] = $this->delete($key, $timeout);
                 }
                 return $rows;
             } else {
@@ -111,7 +110,7 @@
             if (is_array($node)) {
                 $return = array();
                 foreach ($node as $key) {
-                    $return[] = $this->get($key, $flag);
+                    $return[$key] = $this->get($key, $flag);
                 }
                 return $return;
             } else {
@@ -137,21 +136,21 @@
         public function increment($node, $increment = 1)
         {
             if (is_array($node)) {
-                $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = $func($key, $increment);
+                    $rows[$key] = $this->increment($key, $increment);
                 }
                 return $rows;
             } else {
                 $value = $this->get($node);
                 if ($value !== false) {
                     $value += $increment;
-                    return $this->replace($node, $value);
+                    $this->replace($node, $value);
                 } else {
                     $value = $increment;
-                    return $this->set($node, $value);
+                    $this->set($node, $value);
                 }
+                return $value;
             }
         }
 
@@ -161,14 +160,19 @@
         public function replace($node, $value, $expiration = 0, $flag = 0)
         {
             if (is_array($node)) {
-                $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key => $v) {
-                    $rows[$key] = $func($key, $v, $value, $expiration);
+                    $rows[$key] = $this->replace($key, $v, $value, $expiration);
                 }
                 return $rows;
             } else {
-                return $this->set($node, $value, $expiration, $flag);
+                $key = $this->key($node);
+                $_node = new Node($node, $value, $expiration);
+                if (array_key_exists($key, $this->data)) {
+                    $this->data[$key] = null;
+                }
+                $this->data[$key] = $_node;
+                return $value;
             }
         }
 
@@ -178,10 +182,9 @@
         public function set($node, $value, $expiration = 0, $flag = 0)
         {
             if (is_array($node)) {
-                $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key => $v) {
-                    $rows[$key] = $func($key, $v, $value, $expiration);
+                    $rows[$key] = $this->set($key, $v, $value, $expiration);
                 }
                 return $rows;
             } else {
@@ -220,5 +223,13 @@
         public function getName()
         {
             return 'Local';
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function getInstance()
+        {
+            return null;
         }
     }

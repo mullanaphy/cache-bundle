@@ -25,6 +25,9 @@
      */
     class Redis implements CacheInterface
     {
+        /**
+         * @var \Redis $instance
+         */
         private $instance;
 
         /**
@@ -81,7 +84,7 @@
                 $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = $func($key, $decrement);
+                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $decrement));
                 }
                 return $rows;
             } else {
@@ -117,7 +120,7 @@
                     $func = __FUNCTION__;
                     $rows = array();
                     foreach ($node as $key) {
-                        $rows[$key] = $func($key, $flag);
+                        $rows[$key] = call_user_func_array(array($this, $func), array($key, $flag));
                     }
                     return $rows;
                 } else {
@@ -141,7 +144,7 @@
                 $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = $func($key, $increment);
+                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $increment));
                 }
                 return $rows;
             } else {
@@ -168,7 +171,7 @@
                 $func = __FUNCTION__;
                 $return = array();
                 foreach ($node as $key => $v) {
-                    $return[$key] = $func($key, $v, $value, $expiration);
+                    $return[$key] = call_user_func_array(array($this, $func), array($key, $v, $value, $expiration));
                 }
                 return $return;
             } else {
@@ -181,10 +184,9 @@
                     $set = $this->instance->set($node, $value);
                 }
                 if ($set && $expiration) {
-                    return $set && $this->instance->setTimeout($node, $expiration);
-                } else {
-                    return $set;
+                    $this->instance->setTimeout($node, $expiration);
                 }
+                return $set;
             }
         }
 

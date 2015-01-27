@@ -109,4 +109,11 @@
          * @return string
          */
         public function getName();
+
+        /**
+         * Grab our internal instance if the class has it.
+         *
+         * @return mixed
+         */
+        public function getInstance();
     }

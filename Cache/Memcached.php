@@ -23,8 +23,12 @@
      * @license http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
      * @author John Mullanaphy <john@jo.mu>
      */
-    class Memcached extends \Memcached implements CacheInterface
+    class Memcached implements CacheInterface
     {
+        /**
+         * @var \Memcached
+         */
+        private $instance;
 
         /**
          * $settings['id'] will set the persistent_id of this Memcached session.
@@ -35,8 +39,12 @@
          */
         public function __construct(array $settings = array())
         {
+
+            $this->instance = new \Memcached(array_key_exists('id', $settings)
+                ? $settings['id']
+                : null);
             if (array_key_exists('server', $settings)) {
-                $this->addServers($settings['servers']);
+                $this->instance->addServers($settings['servers']);
             }
         }
 
@@ -49,11 +57,11 @@
                 $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = $func($key, $decrement);
+                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $decrement));
                 }
                 return $rows;
             } else {
-                return parent::decrement($node, $decrement);
+                return $this->instance->decrement($node, $decrement);
             }
         }
 
@@ -66,11 +74,11 @@
                 $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = $func($key, $timeout);
+                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $timeout));
                 }
                 return $rows;
             } else {
-                return parent::delete($node);
+                return $this->instance->delete($node);
             }
         }
 
@@ -79,7 +87,7 @@
          */
         public function flush()
         {
-            return parent::flush();
+            return $this->instance->flush();
         }
 
         /**
@@ -91,14 +99,14 @@
                 $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = $func($key, $flag);
+                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $flag));
                 }
                 return $rows;
             } else {
                 if (MEMCACHE_COMPRESSED === $flag) {
-                    return gzuncompress(parent::get($node), -1);
+                    return gzuncompress($this->instance->get($node), -1);
                 } else {
-                    return parent::get($node);
+                    return $this->instance->get($node);
                 }
             }
         }
@@ -112,11 +120,11 @@
                 $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = $func($key, $increment);
+                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $increment));
                 }
                 return $rows;
             } else {
-                return parent::increment($node, $increment);
+                return $this->instance->increment($node, $increment);
             }
         }
 
@@ -129,7 +137,7 @@
                 $func = __FUNCTION__;
                 $return = array();
                 foreach ($node as $key => $v) {
-                    $return[$key] = $func($key, $v, $value, $expiration);
+                    $return[$key] = call_user_func_array(array($this, $func), array($key, $v, $value, $expiration));
                 }
                 return $return;
             } else {
@@ -137,9 +145,9 @@
                     return gzcompress($value, -1);
                 };
                 if (MEMCACHE_COMPRESSED === $flag) {
-                    return parent::replace($node, $compressor($value), $flag, $expiration);
+                    return $this->instance->replace($node, $compressor($value), $flag, $expiration);
                 } else {
-                    return parent::replace($node, $value, $expiration);
+                    return $this->instance->replace($node, $value, $expiration);
                 }
             }
         }
@@ -153,7 +161,7 @@
                 $func = __FUNCTION__;
                 $return = array();
                 foreach ($node as $key => $v) {
-                    $return[$key] = $func($key, $v, $value, $expiration);
+                    $return[$key] = call_user_func_array(array($this, $func), array($key, $v, $value, $expiration));
                 }
                 return $return;
             } else {
@@ -161,9 +169,9 @@
                     return gzcompress($value, -1);
                 };
                 if (MEMCACHE_COMPRESSED === $flag) {
-                    return parent::set($node, $compressor($node), $expiration);
+                    return $this->instance->set($node, $compressor($node), $expiration);
                 } else {
-                    return parent::set($node, $value, $expiration);
+                    return $this->instance->set($node, $value, $expiration);
                 }
             }
         }
@@ -174,5 +182,21 @@
         public function getName()
         {
             return 'Memcached';
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function getInstance()
+        {
+            return $this->instance;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function getStats()
+        {
+            return $this->instance->getStats();
         }
     }
