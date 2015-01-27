@@ -81,10 +81,9 @@
         public function decrement($node, $decrement = 1)
         {
             if (is_array($node)) {
-                $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $decrement));
+                    $rows[$key] = $this->decrement($key, $decrement);
                 }
                 return $rows;
             } else {
@@ -117,17 +116,16 @@
         {
             if (is_array($node)) {
                 if ($flag) {
-                    $func = __FUNCTION__;
                     $rows = array();
                     foreach ($node as $key) {
-                        $rows[$key] = call_user_func_array(array($this, $func), array($key, $flag));
+                        $rows[$key] = $this->get($key, $flag);
                     }
                     return $rows;
                 } else {
                     return $this->instance->mGet($node);
                 }
             } else {
-                if (MEMCACHE_COMPRESSED === $flag) {
+                if (defined('MEMCACHE_COMPRESSED') && MEMCACHE_COMPRESSED === $flag) {
                     return gzuncompress($this->instance->get($node), -1);
                 } else {
                     return $this->instance->get($node);
@@ -141,10 +139,9 @@
         public function increment($node, $increment = 1)
         {
             if (is_array($node)) {
-                $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $increment));
+                    $rows[$key] = $this->increment($key, $increment);
                 }
                 return $rows;
             } else {
@@ -168,17 +165,16 @@
         public function set($node, $value, $expiration = 0, $flag = 0)
         {
             if (is_array($node)) {
-                $func = __FUNCTION__;
                 $return = array();
                 foreach ($node as $key => $v) {
-                    $return[$key] = call_user_func_array(array($this, $func), array($key, $v, $value, $expiration));
+                    $return[$key] = $this->set($key, $v, $value, $expiration);
                 }
                 return $return;
             } else {
                 $compressor = function ($value) {
                     return gzcompress($value, -1);
                 };
-                if (MEMCACHE_COMPRESSED === $flag) {
+                if (defined('MEMCACHE_COMPRESSED') && MEMCACHE_COMPRESSED === $flag) {
                     $set = $this->instance->set($node, $compressor($node));
                 } else {
                     $set = $this->instance->set($node, $value);

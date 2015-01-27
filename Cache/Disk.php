@@ -51,10 +51,9 @@
         public function decrement($node, $decrement = 1)
         {
             if (is_array($node)) {
-                $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $decrement));
+                    $rows[$key] = $this->decrement($key, $decrement);
                 }
                 return $rows;
             } else {
@@ -75,10 +74,9 @@
         public function delete($node, $timeout = 0)
         {
             if (is_array($node)) {
-                $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $timeout));
+                    $rows[$key] = $this->delete($key, $timeout);
                 }
                 return $rows;
             } else {
@@ -135,7 +133,7 @@
                     $FILE = fopen($file, 'r+');
                     $item = fread($FILE, filesize($file));
                     fclose($FILE);
-                    if (MEMCACHE_COMPRESSED === $flag) {
+                    if (defined('MEMCACHE_COMPRESSED') && MEMCACHE_COMPRESSED === $flag) {
                         $item = unserialize(gzuncompress($item, -1));
                     } else {
                         $item = unserialize($item);
@@ -156,10 +154,9 @@
         public function increment($node, $increment = 1)
         {
             if (is_array($node)) {
-                $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key) {
-                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $increment));
+                    $rows[$key] = $this->increment($key, $increment);
                 }
                 return $rows;
             } else {
@@ -180,10 +177,9 @@
         public function replace($node, $value, $expiration = 0, $flag = 0)
         {
             if (is_array($node)) {
-                $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key => $v) {
-                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $v, $value, $expiration));
+                    $rows[$key] = $this->replace($key, $v, $value, $expiration);
                 }
                 return $rows;
             } else {
@@ -201,10 +197,9 @@
         public function set($node, $value, $expiration = 0, $flag = 0)
         {
             if (is_array($node)) {
-                $func = __FUNCTION__;
                 $rows = array();
                 foreach ($node as $key => $v) {
-                    $rows[$key] = call_user_func_array(array($this, $func), array($key, $v, $value, $expiration));
+                    $rows[$key] = $this->set($key, $v, $value, $expiration);
                 }
                 return $rows;
             } else {
