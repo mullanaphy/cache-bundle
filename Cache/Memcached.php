@@ -44,7 +44,7 @@
                 ? $settings['id']
                 : null);
             if (array_key_exists('server', $settings)) {
-                $this->instance->addServers($settings['servers']);
+                $this->instance->addServers($settings['server']);
             }
         }
 
