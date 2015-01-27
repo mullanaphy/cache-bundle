@@ -18,7 +18,6 @@
     use PHY\CacheBundle\Cache;
     use PHY\CacheBundle\Cache\Local;
     use Symfony\Component\DependencyInjection\ContainerBuilder;
-    use Symfony\Component\DependencyInjection\Definition;
     use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
     use Symfony\Component\DependencyInjection\Compiler\ResolveDefinitionTemplatesPass;
 

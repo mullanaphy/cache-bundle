@@ -32,9 +32,9 @@
     {
 
         /**
-         * Return a Memcached class.
+         * Return an Apc class.
          *
-         * @return Memcache
+         * @return Apc
          */
         public function getCache()
         {

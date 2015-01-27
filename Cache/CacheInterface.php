@@ -28,6 +28,8 @@
 
         /**
          * Initiate a Cache.
+         *
+         * @param array $settings
          */
         public function __construct(array $settings = array());
 

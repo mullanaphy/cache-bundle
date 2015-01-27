@@ -100,7 +100,7 @@
          */
         public function delete($node, $timeout = 0)
         {
-            return $this->instance->delete($node);
+            return $this->instance->del($node);
         }
 
         /**
@@ -108,7 +108,7 @@
          */
         public function flush()
         {
-            return parent::flush();
+            return $this->instance->flushAll();
         }
 
         /**

@@ -14,7 +14,6 @@
 
     namespace PHY\CacheBundle\Tests\Cache;
 
-    use PHY\CacheBundle\Cache\None;
     use PHY\CacheBundle\Cache\Redis;
     use PHY\CacheBundle\Tests\CacheTestAbstract;
 
@@ -134,6 +133,8 @@
 
         /**
          * All of our tests are the default ones, just wrapped with a try for instances of no Redis connection.
+         *
+         * @param string $func
          */
         private function _test($func)
         {
