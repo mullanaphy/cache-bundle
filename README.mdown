@@ -25,15 +25,15 @@ Here's an example of our services.yml, you don't really need to change this sinc
 ```yaml
 services:
   phy_cache.client:
-    class: %phy_cache.class%
-    arguments: [ %phy_cache.settings% ]
+    class: '%phy_cache.class%'
+    arguments: [ '%phy_cache.settings%' ]
   phy_cache:
     class: PHY\CacheBundle\Cache
     arguments: [ '@phy_cache.client' ]
     calls:
-      - [ setExpiration, [ %phy_cache.expiration% ] ]
-      - [ setCompression, [ %phy_cache.compression% ] ]
-      - [ setPrefix, [ %phy_cache.prefix% ] ]
+      - [ setExpiration, [ '%phy_cache.expiration%' ] ]
+      - [ setCompression, [ '%phy_cache.compression%' ] ]
+      - [ setPrefix, [ '%phy_cache.prefix%' ] ]
 ```
 
 Here's how you'd setup some common caches in your parameters.yml
